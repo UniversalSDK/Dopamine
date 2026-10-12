@@ -179,7 +179,7 @@
           <div class="brew-label-group">
             <span class="terminal-prompt">$</span>
             <span class="brew-label" data-i18n="brew_label">Install via Homebrew:</span>
-            <code class="brew-code" id="brewCmdText">brew install --cask dopamine</code>
+            <code class="brew-code" id="brewCmdText">brew tap UniversalSDK/dopamine && brew install --cask dopamine</code>
           </div>
           <button class="btn-copy-brew" id="btnCopyBrew" title="Copy to clipboard" aria-label="Copy command">
             <svg class="copy-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -713,7 +713,7 @@
             </button>
             <div class="faq-answer">
               <p data-i18n="faq_a5">
-                Simply open your Terminal and paste: <code>brew install --cask dopamine</code>. Homebrew will automatically verify the SHA-256 checksum and link Dopamine into your /Applications directory.
+                Simply open your Terminal and paste: <code>brew tap UniversalSDK/dopamine && brew install --cask dopamine</code>. Homebrew will automatically verify the SHA-256 checksum and link Dopamine into your /Applications directory.
               </p>
             </div>
           </div>
@@ -747,7 +747,7 @@
             </a>
 
             <button class="btn-copy-brew-footer glass-btn" id="btnCopyBrewFooter">
-              <code>brew install --cask dopamine</code>
+              <code>brew tap UniversalSDK/dopamine && brew install --cask dopamine</code>
               <span class="copy-badge-pill" id="footerCopyPill" data-i18n="btn_copy">Copy</span>
             </button>
           </div>
