@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <url>
+    <loc>https://dopamine.33rd.pro/</loc>
+    <lastmod>2026-10-12</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://dopamine.33rd.pro/?lang=en"/>
+    <xhtml:link rel="alternate" hreflang="uk" href="https://dopamine.33rd.pro/?lang=uk"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://dopamine.33rd.pro/?lang=de"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://dopamine.33rd.pro/?lang=fr"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://dopamine.33rd.pro/?lang=ja"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://dopamine.33rd.pro/?lang=es"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://dopamine.33rd.pro/?lang=zh"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://dopamine.33rd.pro/?lang=it"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://dopamine.33rd.pro/?lang=pt"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://dopamine.33rd.pro/?lang=ko"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://dopamine.33rd.pro/?lang=ru"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://dopamine.33rd.pro/"/>
+  </url>
+</urlset>

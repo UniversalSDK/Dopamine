@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dopamine — Keep your Mac awake. Protect your Liquid Retina screen.</title>
+  <meta name="description" content="Next-generation macOS keep-awake utility with true zero-nit hardware backlight cutoff. Prevent clamshell sleep while protecting Liquid Retina screens and battery health.">
+  <meta name="keywords" content="Dopamine, macOS keep awake, prevent sleep, clamshell mode, zero nits, Liquid Retina, Apple Silicon, M1 M2 M3 M4, Amphetamine alternative">
+  
+  <!-- OpenGraph / Social -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Dopamine — Keep your Mac awake. Protect your Liquid Retina screen.">
+  <meta property="og:description" content="Dual-mode power assertion & hardware backlight cutoff for macOS. Run tasks with the lid closed without heat traps.">
+  <meta property="og:image" content="assets/icon.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="theme-color" content="#080c14">
+  
+  <link rel="icon" type="image/jpeg" href="assets/icon.jpg">
+
+  <!-- Google Analytics 4 (GA4) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-LQEH65Z6W0"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-LQEH65Z6W0');
+  </script>
+
+  <!-- Google Fonts: Inter for crisp cross-platform rendering alongside SF Pro -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="dark-theme">
+
+  <!-- Ambient Dynamic Glow Background -->
+  <div class="ambient-glow ambient-amber" aria-hidden="true"></div>
+  <div class="ambient-glow ambient-cyan" aria-hidden="true"></div>
+  <div class="mesh-grid-overlay" aria-hidden="true"></div>
+
+  <!-- Sticky Glass Navigation -->
+  <header class="navbar-wrapper">
+    <nav class="navbar glass-card">
+      <a href="#hero" class="nav-brand" aria-label="Dopamine Home">
+        <div class="nav-logo-badge">
+          <img src="assets/icon.jpg" alt="Dopamine App Icon" class="nav-logo-img">
+          <span class="nav-logo-glow"></span>
+        </div>
+        <span class="nav-title">Dopamine</span>
+        <span class="nav-version">v1.2</span>
+      </a>
+
+      <div class="nav-links">
+        <a href="#comparison" class="nav-link" data-i18n="nav_comparison">Comparison</a>
+        <a href="#menubar-demo" class="nav-link" data-i18n="nav_interactive">Interactive Demo</a>
+        <a href="#features" class="nav-link" data-i18n="nav_features">Features</a>
+        <a href="#specs" class="nav-link" data-i18n="nav_specs">Tech Specs</a>
+        <a href="#faq" class="nav-link" data-i18n="nav_faq">FAQ</a>
+      </div>
+
+      <div class="nav-actions">
+        <!-- Multilingual Language Selector (11 Languages) -->
+        <div class="lang-selector-wrapper">
+          <button id="langDropdownBtn" class="btn-lang glass-btn" aria-haspopup="true" aria-expanded="false" title="Switch Language">
+            <svg class="lang-globe-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="2" y1="12" x2="22" y2="12"></line>
+              <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+            </svg>
+            <span id="currentLangLabel">English</span>
+            <svg class="chevron-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </button>
+          
+          <div id="langDropdownMenu" class="lang-menu glass-card">
+            <button class="lang-option active" data-lang="en">🇬🇧 English</button>
+            <button class="lang-option" data-lang="uk">🇺🇦 Українська</button>
+            <button class="lang-option" data-lang="de">🇩🇪 Deutsch</button>
+            <button class="lang-option" data-lang="fr">🇫🇷 Français</button>
+            <button class="lang-option" data-lang="ja">🇯🇵 日本語</button>
+            <button class="lang-option" data-lang="es">🇪🇸 Español</button>
+            <button class="lang-option" data-lang="zh">🇨🇳 简体中文</button>
+            <button class="lang-option" data-lang="it">🇮🇹 Italiano</button>
+            <button class="lang-option" data-lang="pt">🇵🇹 Português</button>
+            <button class="lang-option" data-lang="ko">🇰🇷 한국어</button>
+            <button class="lang-option" data-lang="ru">🇷🇺 Русский</button>
+          </div>
+        </div>
+
+        <a href="#downloads" class="btn-primary-nav glass-cta">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="7 10 12 15 17 10"></polyline>
+            <line x1="12" y1="15" x2="12" y2="3"></line>
+          </svg>
+          <span data-i18n="nav_download">Get App</span>
+        </a>
+      </div>
+
+      <!-- Mobile Hamburger Toggle -->
+      <button id="mobileNavToggle" class="mobile-toggle" aria-label="Toggle navigation menu">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </nav>
+  </header>
+
+  <!-- Mobile Drawer Menu -->
+  <div id="mobileDrawer" class="mobile-drawer glass-card">
+    <div class="mobile-drawer-links">
+      <a href="#comparison" class="mobile-link" data-i18n="nav_comparison">Comparison</a>
+      <a href="#menubar-demo" class="mobile-link" data-i18n="nav_interactive">Interactive Demo</a>
+      <a href="#features" class="mobile-link" data-i18n="nav_features">Features</a>
+      <a href="#specs" class="mobile-link" data-i18n="nav_specs">Tech Specs</a>
+      <a href="#faq" class="mobile-link" data-i18n="nav_faq">FAQ</a>
+      <a href="#downloads" class="mobile-link btn-mobile-dl" data-i18n="nav_download">Download Dopamine</a>
+    </div>
+  </div>
+
+  <main>
+    <!-- HERO SECTION -->
+    <section id="hero" class="hero-section">
+      <div class="container hero-container">
+        
+        <!-- Top Pill Tag -->
+        <div class="hero-badge-wrapper fade-in-up">
+          <div class="hero-badge">
+            <span class="badge-dot-pulse"></span>
+            <span class="badge-text" data-i18n="hero_badge">macOS Sequoia Ready • 100% Native Apple Silicon</span>
+            <span class="badge-arrow">→</span>
+          </div>
+        </div>
+
+        <!-- Main Headline -->
+        <h1 class="hero-headline fade-in-up delay-1">
+          <span data-i18n="hero_title_p1">Keep your Mac awake.</span><br>
+          <span class="gradient-text" data-i18n="hero_title_p2">Protect your Liquid Retina screen.</span>
+        </h1>
+
+        <!-- Subtitle -->
+        <p class="hero-subtitle fade-in-up delay-2" data-i18n="hero_subtitle">
+          The ultimate dual-engine macOS utility. Execute long-running renders, builds, and downloads with the lid closed — while cutting internal display power to <strong>absolute 0.0 nits</strong> to eliminate heat traps and screen burn.
+        </p>
+
+        <!-- CTA Buttons Row -->
+        <div class="hero-cta-group fade-in-up delay-3" id="downloads">
+          <a href="Dopamine.dmg" class="btn-hero-primary" id="btnDownloadDmg" download="Dopamine.dmg">
+            <div class="btn-shine"></div>
+            <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="7 10 12 15 17 10"></polyline>
+              <line x1="12" y1="15" x2="12" y2="3"></line>
+            </svg>
+            <div class="btn-text-block">
+              <span class="btn-main-title" data-i18n="btn_dmg_title">Download DMG (Apple Silicon)</span>
+              <span class="btn-sub-title" data-i18n="btn_dmg_sub">v1.2.0 • macOS 12+ Monterey to Sequoia • 2.6 MB</span>
+            </div>
+          </a>
+
+          <a href="Dopamine-Installer.pkg" class="btn-hero-secondary glass-card" id="btnDownloadPkg" download="Dopamine-Installer.pkg">
+            <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+              <line x1="8" y1="21" x2="16" y2="21"></line>
+              <line x1="12" y1="17" x2="12" y2="21"></line>
+            </svg>
+            <div class="btn-text-block">
+              <span class="btn-main-title" data-i18n="btn_pkg_title">Download PKG Installer</span>
+              <span class="btn-sub-title" data-i18n="btn_pkg_sub">Enterprise / IT Admin Deployment</span>
+            </div>
+          </a>
+        </div>
+
+        <!-- Homebrew Copy Terminal Pill -->
+        <div class="hero-brew-card glass-card fade-in-up delay-4">
+          <div class="brew-label-group">
+            <span class="terminal-prompt">$</span>
+            <span class="brew-label" data-i18n="brew_label">Install via Homebrew:</span>
+            <code class="brew-code" id="brewCmdText">brew install --cask dopamine</code>
+          </div>
+          <button class="btn-copy-brew" id="btnCopyBrew" title="Copy to clipboard" aria-label="Copy command">
+            <svg class="copy-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+            </svg>
+            <span class="copy-text" id="copyBtnText" data-i18n="btn_copy">Copy</span>
+          </button>
+        </div>
+
+        <!-- Hero 3D Badge / Icon Visual Showcase -->
+        <div class="hero-visual-wrapper fade-in-up delay-5">
+          <div class="hero-icon-card glass-card" id="heroIconTilt">
+            <div class="rim-glow-cyan"></div>
+            <div class="rim-glow-amber"></div>
+            <img src="assets/icon.jpg" alt="Dopamine App Icon" class="hero-app-icon" id="heroMainIcon">
+            <div class="icon-meta-badges">
+              <div class="meta-pill meta-pill-cyan">
+                <span class="pill-dot"></span>
+                <span data-i18n="meta_backlight">0.0 Nits Backlight Cutoff</span>
+              </div>
+              <div class="meta-pill meta-pill-amber">
+                <span class="pill-dot"></span>
+                <span data-i18n="meta_native">Native Swift 6 • 0% CPU</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Trust & Security Badges -->
+        <div class="hero-trust-row fade-in-up delay-5">
+          <div class="trust-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+            <span data-i18n="trust_hardened">Apple Hardened Runtime</span>
+          </div>
+          <div class="trust-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 14 14"></polyline></svg>
+            <span data-i18n="trust_battery">Intelligent Battery Safeguard</span>
+          </div>
+          <div class="trust-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+            <span data-i18n="trust_privacy">Zero Telemetry Without Consent</span>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- SECTION 2: BEFORE & AFTER CLAMSHELL COMPARISON -->
+    <section id="comparison" class="section comparison-section">
+      <div class="container">
+        
+        <div class="section-header text-center">
+          <div class="section-tag" data-i18n="comp_tag">Hardware Reality Check</div>
+          <h2 class="section-title" data-i18n="comp_title">Why Old Keep-Awake Tools Damage Your Mac</h2>
+          <p class="section-desc" data-i18n="comp_subtitle">
+            Traditional tools like Amphetamine, Caffeine, and KeepingYouAwake were built for older Intel laptops. On modern MacBook Pro Liquid Retina XDR displays, they create dangerous thermal traps.
+          </p>
+        </div>
+
+        <div class="comparison-grid">
+          <!-- CARD A: OLD TOOLS -->
+          <div class="compare-card compare-card-legacy glass-card">
+            <div class="card-badge badge-warning" data-i18n="comp_old_badge">Legacy Utilities (Amphetamine, Caffeine)</div>
+            
+            <div class="laptop-visual laptop-visual-hot">
+              <div class="screen-lid-closed">
+                <div class="heat-glow-hazard"></div>
+                <div class="laptop-icon-label" data-i18n="comp_old_lid_label">Lid Closed: Display Trapped ON</div>
+                <div class="stat-pill stat-pill-danger">
+                  <span class="stat-value">500–1600 nits</span>
+                  <span class="stat-label" data-i18n="comp_old_stat_backlight">Trapped Mini-LED Backlight</span>
+                </div>
+              </div>
+            </div>
+
+            <h3 class="card-title text-danger" data-i18n="comp_old_head">Thermal & Coating Degradation</h3>
+            <ul class="compare-list">
+              <li>
+                <span class="bullet-cross">✕</span>
+                <div class="list-content">
+                  <strong data-i18n="comp_old_p1_title">Heat Trapped Against Keyboard:</strong>
+                  <span data-i18n="comp_old_p1_desc">Liquid Retina XDR mini-LEDs pump thermal energy straight into the closed keys, accelerating anti-reflective coating wear.</span>
+                </div>
+              </li>
+              <li>
+                <span class="bullet-cross">✕</span>
+                <div class="list-content">
+                  <strong data-i18n="comp_old_p2_title">Wasted Battery & Cycle Count:</strong>
+                  <span data-i18n="comp_old_p2_desc">Powering millions of display subpixels for an invisible closed screen drains 15–30% more battery every hour.</span>
+                </div>
+              </li>
+              <li>
+                <span class="bullet-cross">✕</span>
+                <div class="list-content">
+                  <strong data-i18n="comp_old_p3_title">Forced Clamshell Cables:</strong>
+                  <span data-i18n="comp_old_p3_desc">Apple default clamshell requires an external power brick and external display just to prevent sleep.</span>
+                </div>
+              </li>
+            </ul>
+          </div>
+
+          <!-- CARD B: DOPAMINE -->
+          <div class="compare-card compare-card-dopamine glass-card">
+            <div class="card-badge badge-success" data-i18n="comp_ag_badge">Dopamine Dual-Engine Solution</div>
+            
+            <div class="laptop-visual laptop-visual-cool">
+              <div class="screen-lid-closed cool-lid">
+                <div class="cool-glow-safe"></div>
+                <div class="laptop-icon-label" data-i18n="comp_ag_lid_label">Lid Closed: Hardware 0.0 nits</div>
+                <div class="stat-pill stat-pill-safe">
+                  <span class="stat-value">0.0 nits</span>
+                  <span class="stat-label" data-i18n="comp_ag_stat_backlight">True Hardware Blackout</span>
+                </div>
+              </div>
+            </div>
+
+            <h3 class="card-title text-cyan" data-i18n="comp_ag_head">Cold Silicon, Continuous Compute</h3>
+            <ul class="compare-list">
+              <li>
+                <span class="bullet-check">✓</span>
+                <div class="list-content">
+                  <strong data-i18n="comp_ag_p1_title">Zero-Nit CoreDisplay Cutoff:</strong>
+                  <span data-i18n="comp_ag_p1_desc">Direct IOKit / CoreGraphics hardware register call turns off the mini-LED backlight instantly when the lid closes.</span>
+                </div>
+              </li>
+              <li>
+                <span class="bullet-check">✓</span>
+                <div class="list-content">
+                  <strong data-i18n="comp_ag_p2_title">Zero Heat Dissipation to Keys:</strong>
+                  <span data-i18n="comp_ag_p2_desc">Your Liquid Retina screen stays stone-cold while CPU/GPU render at maximum performance inside your backpack or desk.</span>
+                </div>
+              </li>
+              <li>
+                <span class="bullet-check">✓</span>
+                <div class="list-content">
+                  <strong data-i18n="comp_ag_p3_title">True Cable-Free Clamshell:</strong>
+                  <span data-i18n="comp_ag_p3_desc">No external monitor or power adapter required. Safely compiles Swift, renders Blender, or trains models on battery.</span>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- SECTION 3: INTERACTIVE MENUBAR MOCKUP -->
+    <section id="menubar-demo" class="section menubar-section">
+      <div class="container">
+        
+        <div class="section-header text-center">
+          <div class="section-tag" data-i18n="demo_tag">Live Interactive Simulation</div>
+          <h2 class="section-title" data-i18n="demo_title">Experience the macOS Menu Bar App</h2>
+          <p class="section-desc" data-i18n="demo_subtitle">
+            Click the Dopamine menu icon below to toggle active sleep prevention, change icons, and explore the native macOS Sequoia menu.
+          </p>
+        </div>
+
+        <!-- Simulated macOS Desktop Bar -->
+        <div class="mac-screen-mockup glass-card">
+          <div class="mac-menubar">
+            
+            <!-- Left Side: Apple Logo & Standard Menu Items -->
+            <div class="mac-menubar-left">
+              <span class="mac-apple-logo"></span>
+              <span class="mac-app-name">Dopamine</span>
+              <span class="mac-menu-item-text">File</span>
+              <span class="mac-menu-item-text">Edit</span>
+              <span class="mac-menu-item-text">View</span>
+              <span class="mac-menu-item-text">Window</span>
+              <span class="mac-menu-item-text">Help</span>
+            </div>
+
+            <!-- Right Side: System Tray + Dopamine Live Item -->
+            <div class="mac-menubar-right">
+              
+              <!-- Dopamine Interactive Item -->
+              <div class="mac-status-item-trigger active" id="menuItemDopamine" tabindex="0" role="button" aria-label="Dopamine Menu Item">
+                <span class="status-icon" id="menubarActiveIcon">👁️</span>
+                <span class="status-timer-text" id="menubarTimerText">01:45:22</span>
+                <span class="status-active-pulse" id="menubarPulse"></span>
+              </div>
+
+              <!-- Other Standard macOS Icons -->
+              <span class="mac-sys-icon" title="Wi-Fi">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M12 18c.8 0 1.5.7 1.5 1.5S12.8 21 12 21s-1.5-.7-1.5-1.5.7-1.5 1.5-1.5zm-5-4c2.8-2.8 7.2-2.8 10 0l-1.4 1.4c-2-2-5.2-2-7.2 0L7 14zm-3-3c4.4-4.4 11.6-4.4 16 0l-1.4 1.4c-3.6-3.6-9.6-3.6-13.2 0L4 11zm-3-3C6.4 2.6 17.6 2.6 23 8l-1.4 1.4C16.8 4.6 7.2 4.6 2.4 9.4L1 8z"/></svg>
+              </span>
+              <span class="mac-sys-icon" title="Battery 98%">
+                <span class="battery-chip"><span class="battery-fill" style="width: 94%;"></span></span> 94%
+              </span>
+              <span class="mac-sys-icon" title="Control Center">⚲</span>
+              <span class="mac-sys-time" id="macClockTime">Mon 20:45</span>
+            </div>
+          </div>
+
+          <!-- Realistic Desktop Workspace Screen -->
+          <div class="mac-desktop-stage">
+            <div class="desktop-wallpaper-glow"></div>
+            
+            <!-- Floating Desktop Widget -->
+            <div class="desktop-widget glass-card">
+              <div class="widget-header">
+                <span class="widget-dot red"></span>
+                <span class="widget-dot yellow"></span>
+                <span class="widget-dot green"></span>
+                <span class="widget-title">Dopamine Display Engine</span>
+              </div>
+              <div class="widget-body">
+                <div class="widget-row">
+                  <span class="widget-k">CoreDisplay State:</span>
+                  <span class="widget-v text-cyan">IOKit Direct Assertion Active</span>
+                </div>
+                <div class="widget-row">
+                  <span class="widget-k">Target Lid Clamshell:</span>
+                  <span class="widget-v text-amber">0.0 Nits Backlight Cutoff</span>
+                </div>
+                <div class="widget-row">
+                  <span class="widget-k">Current Idle CPU:</span>
+                  <span class="widget-v">0.00% (Energy Core Efficient)</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- The Live Interactive macOS Menu Popover -->
+            <div class="mac-dropdown-menu glass-card" id="macDropdownMenu">
+              <div class="dropdown-header">
+                <span class="dropdown-status-dot active" id="dropdownStatusDot"></span>
+                <div class="dropdown-title-wrap">
+                  <span class="dropdown-state-title" id="dropdownStateTitle" data-i18n="menu_awake_active">Dopamine: Session Active</span>
+                  <span class="dropdown-state-desc" id="dropdownStateDesc" data-i18n="menu_clamshell_safe">Display Backlight: 0.0 nits on Lid Close</span>
+                </div>
+              </div>
+
+              <div class="dropdown-divider"></div>
+
+              <div class="dropdown-section-title" data-i18n="menu_duration_title">Session Duration</div>
+              <div class="dropdown-item active" data-action="duration-indefinite">
+                <span class="item-check">✓</span>
+                <span data-i18n="menu_indefinite">Indefinitely (Until Disengaged)</span>
+              </div>
+              <div class="dropdown-item" data-action="duration-15m">
+                <span class="item-check"></span>
+                <span data-i18n="menu_15m">For 15 Minutes</span>
+              </div>
+              <div class="dropdown-item" data-action="duration-1h">
+                <span class="item-check"></span>
+                <span data-i18n="menu_1h">For 1 Hour</span>
+              </div>
+              <div class="dropdown-item" data-action="duration-2h">
+                <span class="item-check"></span>
+                <span data-i18n="menu_2h">For 2 Hours</span>
+              </div>
+
+              <div class="dropdown-divider"></div>
+
+              <div class="dropdown-item" id="menuToggleClamshell">
+                <span class="item-check">✓</span>
+                <span data-i18n="menu_cut_backlight">Turn Off Backlight on Lid Close</span>
+              </div>
+              <div class="dropdown-item" id="menuToggleAllowSleep">
+                <span class="item-check">✓</span>
+                <span data-i18n="menu_allow_display_sleep">Allow Screen Sleep While Keeping CPU Awake</span>
+              </div>
+              <div class="dropdown-item" id="menuToggleBatterySafeguard">
+                <span class="item-check">✓</span>
+                <span data-i18n="menu_battery_guard">Battery Safeguard: Stop below 10%</span>
+              </div>
+
+              <div class="dropdown-divider"></div>
+
+              <div class="dropdown-item" id="menuOpenPreferences">
+                <span class="item-icon-sub">⚙︎</span>
+                <span data-i18n="menu_preferences">Preferences...</span>
+                <span class="dropdown-shortcut">⌘,</span>
+              </div>
+              <div class="dropdown-item dropdown-item-danger" id="menuToggleState">
+                <span class="item-icon-sub">⏻</span>
+                <span id="menuToggleStateLabel" data-i18n="menu_disable">Disengage Dopamine</span>
+                <span class="dropdown-shortcut">⌘D</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Controls for interactive preview -->
+          <div class="mockup-controls-footer">
+            <div class="control-group">
+              <span class="control-label" data-i18n="demo_toggle_hint">Click menu bar item to toggle state or click button:</span>
+              <button class="btn-control-toggle glass-btn" id="btnToggleSimState">
+                <span id="btnSimStateText" data-i18n="demo_btn_turn_off">Toggle Inactive State</span>
+              </button>
+            </div>
+
+            <div class="control-group">
+              <span class="control-label" data-i18n="demo_icon_style">Select Menu Bar Icon Style:</span>
+              <div class="icon-style-picker" id="iconStylePicker">
+                <button class="btn-icon-choice active" data-icon="eye" data-symbol="👁️" title="Eye">👁️ Eye</button>
+                <button class="btn-icon-choice" data-icon="amphiShield" data-symbol="🛡️" title="Amphi-Shield">🛡️ Shield</button>
+                <button class="btn-icon-choice" data-icon="pill" data-symbol="💊" title="Capsule Pill">💊 Pill</button>
+                <button class="btn-icon-choice" data-icon="bolt" data-symbol="⚡" title="Lightning Bolt">⚡ Bolt</button>
+                <button class="btn-icon-choice" data-icon="sunMoon" data-symbol="☀️" title="Sun & Moon">☀️ Sun/Moon</button>
+                <button class="btn-icon-choice" data-icon="coffee" data-symbol="☕" title="Coffee Cup">☕ Coffee</button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- SECTION 4: POWER & SAFETY FEATURES GRID -->
+    <section id="features" class="section features-section">
+      <div class="container">
+        
+        <div class="section-header text-center">
+          <div class="section-tag" data-i18n="feat_tag">Architected For Apple Silicon</div>
+          <h2 class="section-title" data-i18n="feat_title">Designed For Professional Mac Workflows</h2>
+          <p class="section-desc" data-i18n="feat_subtitle">
+            Every feature in Dopamine is engineered with Swift 6 and low-level IOKit APIs to deliver unmatched performance without compromising hardware longevity.
+          </p>
+        </div>
+
+        <div class="features-grid">
+          
+          <!-- Feature 1: 0.0 Nits Backlight Cutoff -->
+          <div class="feature-card glass-card">
+            <div class="feature-icon-badge cyan-badge">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                <circle cx="12" cy="12" r="3"></circle>
+                <line x1="2" y1="2" x2="22" y2="22"></line>
+              </svg>
+            </div>
+            <h3 class="feature-card-title" data-i18n="feat1_title">True 0.0 Nits Hardware Blackout</h3>
+            <p class="feature-card-desc" data-i18n="feat1_desc">
+              Does not just display a black screensaver. It disengages the physical Mini-LED and OLED backlight controller via IOKit DisplayServices, ensuring zero light bleed and zero keyboard heating.
+            </p>
+          </div>
+
+          <!-- Feature 2: Clamshell Sleep Prevention -->
+          <div class="feature-card glass-card">
+            <div class="feature-icon-badge amber-badge">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                <line x1="2" y1="20" x2="22" y2="20"></line>
+              </svg>
+            </div>
+            <h3 class="feature-card-title" data-i18n="feat2_title">Cable-Free Clamshell Mode</h3>
+            <p class="feature-card-desc" data-i18n="feat2_desc">
+              Apple forces you to connect both power and an external monitor to use Clamshell mode. Dopamine eliminates this constraint safely, allowing fully portable closed-lid operation anywhere.
+            </p>
+          </div>
+
+          <!-- Feature 3: Intelligent Battery Safeguards -->
+          <div class="feature-card glass-card">
+            <div class="feature-icon-badge cyan-badge">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="1" y="6" width="18" height="12" rx="2"></rect>
+                <line x1="23" y1="11" x2="23" y2="13"></line>
+                <line x1="6" y1="12" x2="10" y2="12"></line>
+              </svg>
+            </div>
+            <h3 class="feature-card-title" data-i18n="feat3_title">Automated Battery Safeguard</h3>
+            <p class="feature-card-desc" data-i18n="feat3_desc">
+              Set a critical threshold (e.g., 10% or 20%). If battery level drops below your limit or you disconnect MagSafe, Dopamine gracefully relinquishes assertions to prevent accidental deep discharge.
+            </p>
+          </div>
+
+          <!-- Feature 4: Lightweight Native Footprint -->
+          <div class="feature-card glass-card">
+            <div class="feature-icon-badge amber-badge">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+              </svg>
+            </div>
+            <h3 class="feature-card-title" data-i18n="feat4_title">0.0% Idle CPU & 14MB RAM</h3>
+            <p class="feature-card-desc" data-i18n="feat4_desc">
+              Written 100% in pure native Swift with AppKit status bar architecture. No Electron, no web views, and no background pollers draining your M-series energy cores.
+            </p>
+          </div>
+
+          <!-- Feature 5: Independent Display vs System Sleep -->
+          <div class="feature-card glass-card">
+            <div class="feature-icon-badge cyan-badge">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+              </svg>
+            </div>
+            <h3 class="feature-card-title" data-i18n="feat5_title">Decoupled Display & CPU Sleep</h3>
+            <p class="feature-card-desc" data-i18n="feat5_desc">
+              Keep CPU compute, audio playback, and network sockets alive while letting your screen go to sleep normally on your desk. Best of both worlds for battery life and workflow continuity.
+            </p>
+          </div>
+
+          <!-- Feature 6: Privacy & Gatekeeper Compliance -->
+          <div class="feature-card glass-card">
+            <div class="feature-icon-badge amber-badge">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+              </svg>
+            </div>
+            <h3 class="feature-card-title" data-i18n="feat6_title">Privacy-First & Zero Telemetry</h3>
+            <p class="feature-card-desc" data-i18n="feat6_desc">
+              No analytics or tracking without explicit user consent. Complies fully with Apple Hardened Runtime. All preferences are stored strictly in your local macOS domain defaults.
+            </p>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- SECTION 5: TECHNICAL SPECIFICATIONS -->
+    <section id="specs" class="section specs-section">
+      <div class="container">
+        
+        <div class="section-header text-center">
+          <div class="section-tag" data-i18n="specs_tag">Native Engineering</div>
+          <h2 class="section-title" data-i18n="specs_title">Technical Specifications</h2>
+          <p class="section-desc" data-i18n="specs_subtitle">
+            Pure Swift 6 architecture built specifically for the unified memory architecture of Apple Silicon.
+          </p>
+        </div>
+
+        <div class="specs-table-wrapper glass-card">
+          <table class="specs-table">
+            <tbody>
+              <tr>
+                <th data-i18n="spec_k_os">macOS Compatibility</th>
+                <td>macOS 12.0 Monterey, 13 Ventura, 14 Sonoma, 15 Sequoia (Fully Tested)</td>
+              </tr>
+              <tr>
+                <th data-i18n="spec_k_arch">Hardware Architecture</th>
+                <td>Native ARM64 for Apple Silicon (M1, M1 Pro/Max/Ultra, M2, M3, M4 family) & Intel x86_64</td>
+              </tr>
+              <tr>
+                <th data-i18n="spec_k_lang">Language & Framework</th>
+                <td>100% Pure Swift 6, AppKit, IOKit IOPMAssertion API, CoreDisplay DDC/CI</td>
+              </tr>
+              <tr>
+                <th data-i18n="spec_k_footprint">Binary Size & Footprint</th>
+                <td>&lt; 3 MB download size • &lt; 14 MB RAM usage at runtime • 0.0% idle CPU overhead</td>
+              </tr>
+              <tr>
+                <th data-i18n="spec_k_security">Security & Runtime</th>
+                <td>Apple Hardened Runtime, Gatekeeper Notarized, Sandboxing Power Assertion compliant</td>
+              </tr>
+              <tr>
+                <th data-i18n="spec_k_i18n">Available Languages</th>
+                <td>English, Українська, Deutsch, Français, 日本語, Español, 简体中文, Italiano, Português, 한국어, Русский</td>
+              </tr>
+              <tr>
+                <th data-i18n="spec_k_distribution">Distribution Formats</th>
+                <td>Universal Drag-and-Drop .dmg, Enterprise .pkg Installer, Homebrew Cask</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- SECTION 6: FAQ ACCORDION -->
+    <section id="faq" class="section faq-section">
+      <div class="container">
+        
+        <div class="section-header text-center">
+          <div class="section-tag" data-i18n="faq_tag">Got Questions?</div>
+          <h2 class="section-title" data-i18n="faq_title">Frequently Asked Questions</h2>
+          <p class="section-desc" data-i18n="faq_subtitle">
+            Everything you need to know about display safety, power assertions, and installation.
+          </p>
+        </div>
+
+        <div class="faq-accordion-group">
+          
+          <div class="faq-item glass-card">
+            <button class="faq-question" aria-expanded="false">
+              <span data-i18n="faq_q1">How does Dopamine turn off the display while keeping the Mac awake?</span>
+              <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            </button>
+            <div class="faq-answer">
+              <p data-i18n="faq_a1">
+                Dopamine uses macOS IOKit power assertion APIs (such as PreventUserIdleSystemSleep) to keep the kernel and background processes running, while registering a low-level DisplayServices hardware notification. When clamshell closure is detected, Dopamine immediately signals the display controller to cut power to the backlight LEDs, achieving genuine 0.0 nits true black without putting the SoC to sleep.
+              </p>
+            </div>
+          </div>
+
+          <div class="faq-item glass-card">
+            <button class="faq-question" aria-expanded="false">
+              <span data-i18n="faq_q2">Why is Dopamine safer for Liquid Retina screens than Amphetamine or Caffeine?</span>
+              <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            </button>
+            <div class="faq-answer">
+              <p data-i18n="faq_a2">
+                Liquid Retina XDR screens contain thousands of high-intensity mini-LEDs. When legacy tools keep the Mac awake with the lid closed, those mini-LEDs remain continuously energized at high nits inside a sealed, unventilated air gap right against your keyboard keys. Over time, trapped heat can damage delicate anti-reflective coatings and LCD layers. Dopamine physically cuts backlight power to 0 nits, keeping the screen cool.
+              </p>
+            </div>
+          </div>
+
+          <div class="faq-item glass-card">
+            <button class="faq-question" aria-expanded="false">
+              <span data-i18n="faq_q3">Will Dopamine drain my battery if I accidentally leave it on?</span>
+              <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            </button>
+            <div class="faq-answer">
+              <p data-i18n="faq_a3">
+                No. Dopamine includes an automatic Battery Guard monitor. You can configure it to auto-disengage whenever your battery level drops to 10% (or any threshold you choose), or whenever MagSafe is disconnected. This guarantees you will never open your bag to a drained battery.
+              </p>
+            </div>
+          </div>
+
+          <div class="faq-item glass-card">
+            <button class="faq-question" aria-expanded="false">
+              <span data-i18n="faq_q4">Do I need an external monitor or power adapter to use clamshell mode?</span>
+              <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            </button>
+            <div class="faq-answer">
+              <p data-i18n="faq_a4">
+                No! Apple's default macOS clamshell mode strictly demands both an external power adapter and an external display. Dopamine enables standalone clamshell mode: you can close your MacBook on battery power with no cables connected and it will keep your background tasks running seamlessly.
+              </p>
+            </div>
+          </div>
+
+          <div class="faq-item glass-card">
+            <button class="faq-question" aria-expanded="false">
+              <span data-i18n="faq_q5">How do I install Dopamine via Homebrew?</span>
+              <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            </button>
+            <div class="faq-answer">
+              <p data-i18n="faq_a5">
+                Simply open your Terminal and paste: <code>brew install --cask dopamine</code>. Homebrew will automatically verify the SHA-256 checksum and link Dopamine into your /Applications directory.
+              </p>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- SECTION 7: BOTTOM CTA HERO -->
+    <section class="section cta-banner-section">
+      <div class="container">
+        <div class="cta-banner-card glass-card">
+          <div class="cta-glow-amber"></div>
+          <div class="cta-glow-cyan"></div>
+          
+          <img src="assets/icon.jpg" alt="Dopamine Icon" class="cta-app-icon">
+          <h2 class="cta-title" data-i18n="cta_title">Protect your Mac. Unleash your workflow.</h2>
+          <p class="cta-desc" data-i18n="cta_desc">
+            Download Dopamine today. Zero telemetry, zero bloatware, 100% native Apple Silicon performance.
+          </p>
+
+          <div class="cta-buttons-row">
+            <a href="Dopamine.dmg" class="btn-hero-primary" download="Dopamine.dmg" id="btnDownloadDmgFooter">
+              <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="7 10 12 15 17 10"></polyline>
+                <line x1="12" y1="15" x2="12" y2="3"></line>
+              </svg>
+              <span data-i18n="cta_btn_dmg">Download Dopamine DMG</span>
+            </a>
+
+            <button class="btn-copy-brew-footer glass-btn" id="btnCopyBrewFooter">
+              <code>brew install --cask dopamine</code>
+              <span class="copy-badge-pill" id="footerCopyPill" data-i18n="btn_copy">Copy</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="footer-wrapper">
+    <div class="container footer-content">
+      <div class="footer-left">
+        <div class="footer-brand">
+          <img src="assets/icon.jpg" alt="Dopamine Logo" class="footer-logo">
+          <span>Dopamine</span>
+        </div>
+        <p class="footer-tagline" data-i18n="footer_tagline">Next-generation power & display controller for macOS.</p>
+        <p class="footer-eula">
+          Terms of Use: <a href="https://www.apple.com/legal/internet-services/itunes/dev/stdeula/" target="_blank" rel="noopener noreferrer">Apple Standard EULA</a>
+        </p>
+      </div>
+
+      <div class="footer-links">
+        <div class="footer-col">
+          <span class="footer-heading" data-i18n="footer_downloads">Downloads</span>
+          <a href="Dopamine.dmg" download="Dopamine.dmg">Apple Silicon DMG</a>
+          <a href="Dopamine-Installer.pkg" download="Dopamine-Installer.pkg">Enterprise PKG</a>
+          <a href="checksums.txt" target="_blank">SHA-256 Checksums</a>
+        </div>
+        <div class="footer-col">
+          <span class="footer-heading" data-i18n="footer_legal">Legal & Privacy</span>
+          <a href="https://www.apple.com/legal/internet-services/itunes/dev/stdeula/" target="_blank">Standard EULA</a>
+          <a href="#features">Privacy Policy</a>
+          <a href="#specs">System Specs</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="container footer-bottom">
+      <span class="copyright">© 2026 Dopamine. All rights reserved. macOS and Liquid Retina are trademarks of Apple Inc.</span>
+      <a href="#hero" class="back-to-top" aria-label="Back to top">
+        <span>↑</span> <span data-i18n="back_to_top">Back to top</span>
+      </a>
+    </div>
+  </footer>
+
+  <!-- Instant Toast Notification -->
+  <div id="toastNotification" class="toast-card glass-card" role="alert" aria-live="polite">
+    <svg class="toast-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <polyline points="20 6 9 17 4 12"></polyline>
+    </svg>
+    <span id="toastMessage">Command copied to clipboard!</span>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

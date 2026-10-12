@@ -1,0 +1,2 @@
+ed532bf2ef028abeb00b89ea8355b0b1136bea7194bc0b7fc299544ddd37424f  Dopamine.dmg
+6ca9c1eb19b43ee1260ce153af16f53ae65dce059c87000e3694a2ca2de342bf  /Users/alexey/.gemini/antigravity/scratch/Dopamine/dist/Dopamine-Installer.pkg

@@ -1,0 +1,9 @@
+{
+  "version": "1.2.0",
+  "build": 12,
+  "releaseDate": "2026-10-12T18:05:17Z",
+  "downloadUrl": "https://dopamine.33rd.pro/Dopamine.dmg",
+  "sha256": "ed532bf2ef028abeb00b89ea8355b0b1136bea7194bc0b7fc299544ddd37424f",
+  "releaseNotes": "Dopamine v1.2.0 (Apple Silicon Edition): Pure native Swift keep-awake utility with dual-mode hardware backlight cutoff, 11 languages, battery safeguards, and zero-nit clamshell mode.",
+  "minOS": "12.0"
+}
