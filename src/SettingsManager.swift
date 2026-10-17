@@ -92,7 +92,7 @@ public final class SettingsManager {
     }
     
     public var allowDisplaySleep: Bool {
-        get { defaults.bool(forKey: Keys.allowDisplaySleep) }
+        get { defaults.object(forKey: Keys.allowDisplaySleep) == nil ? true : defaults.bool(forKey: Keys.allowDisplaySleep) }
         set {
             defaults.set(newValue, forKey: Keys.allowDisplaySleep)
             NotificationCenter.default.post(name: .settingsChanged, object: nil)
@@ -101,7 +101,7 @@ public final class SettingsManager {
     }
     
     public var preventLidSleep: Bool {
-        get { defaults.bool(forKey: Keys.preventLidSleep) }
+        get { defaults.object(forKey: Keys.preventLidSleep) == nil ? true : defaults.bool(forKey: Keys.preventLidSleep) }
         set {
             defaults.set(newValue, forKey: Keys.preventLidSleep)
             NotificationCenter.default.post(name: .settingsChanged, object: nil)
@@ -110,7 +110,7 @@ public final class SettingsManager {
     }
     
     public var turnOffBacklightOnLidClose: Bool {
-        get { defaults.bool(forKey: Keys.turnOffBacklightOnLidClose) }
+        get { defaults.object(forKey: Keys.turnOffBacklightOnLidClose) == nil ? true : defaults.bool(forKey: Keys.turnOffBacklightOnLidClose) }
         set {
             defaults.set(newValue, forKey: Keys.turnOffBacklightOnLidClose)
             NotificationCenter.default.post(name: .settingsChanged, object: nil)
@@ -119,7 +119,7 @@ public final class SettingsManager {
     }
     
     public var lockScreenOnLidClose: Bool {
-        get { defaults.bool(forKey: Keys.lockScreenOnLidClose) }
+        get { defaults.object(forKey: Keys.lockScreenOnLidClose) == nil ? true : defaults.bool(forKey: Keys.lockScreenOnLidClose) }
         set {
             defaults.set(newValue, forKey: Keys.lockScreenOnLidClose)
             NotificationCenter.default.post(name: .settingsChanged, object: nil)
@@ -138,7 +138,7 @@ public final class SettingsManager {
     
     // MARK: - Аккумулятор и Сеть
     public var endSessionOnLowBattery: Bool {
-        get { defaults.bool(forKey: Keys.endSessionOnLowBattery) }
+        get { defaults.object(forKey: Keys.endSessionOnLowBattery) == nil ? true : defaults.bool(forKey: Keys.endSessionOnLowBattery) }
         set {
             defaults.set(newValue, forKey: Keys.endSessionOnLowBattery)
             NotificationCenter.default.post(name: .settingsChanged, object: nil)
@@ -192,7 +192,7 @@ public final class SettingsManager {
     }
     
     public var ignoreLowBatteryOnAC: Bool {
-        get { defaults.bool(forKey: Keys.ignoreLowBatteryOnAC) }
+        get { defaults.object(forKey: Keys.ignoreLowBatteryOnAC) == nil ? true : defaults.bool(forKey: Keys.ignoreLowBatteryOnAC) }
         set {
             defaults.set(newValue, forKey: Keys.ignoreLowBatteryOnAC)
             NotificationCenter.default.post(name: .settingsChanged, object: nil)

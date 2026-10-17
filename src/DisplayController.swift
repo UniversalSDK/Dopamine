@@ -24,16 +24,26 @@ public final class DisplayController {
     
     public init() {}
     
-    /// Finds the built-in display ID (Liquid Retina / Retina panel on MacBooks).
+    private var cachedBuiltinDisplayID: CGDirectDisplayID?
+    
+    /// Finds the built-in display ID (Liquid Retina / Retina panel on MacBooks) using online list.
     public func getBuiltinDisplayID() -> CGDirectDisplayID? {
+        if let cached = cachedBuiltinDisplayID {
+            return cached
+        }
         var count: UInt32 = 0
-        CGGetActiveDisplayList(0, nil, &count)
-        guard count > 0 else { return nil }
-        
-        var displays = [CGDirectDisplayID](repeating: 0, count: Int(count))
-        CGGetActiveDisplayList(count, &displays, &count)
-        
-        return displays.first { CGDisplayIsBuiltin($0) != 0 } ?? CGMainDisplayID()
+        CGGetOnlineDisplayList(0, nil, &count)
+        if count > 0 {
+            var displays = [CGDirectDisplayID](repeating: 0, count: Int(count))
+            CGGetOnlineDisplayList(count, &displays, &count)
+            if let builtin = displays.first(where: { CGDisplayIsBuiltin($0) != 0 }) {
+                cachedBuiltinDisplayID = builtin
+                return builtin
+            }
+        }
+        let main = CGMainDisplayID()
+        cachedBuiltinDisplayID = main
+        return main
     }
     
     /// Reads the current hardware brightness (0.0 ... 1.0).
@@ -43,6 +53,8 @@ public final class DisplayController {
         let status = DisplayServicesGetBrightness(id, &value)
         return status == 0 ? value : nil
     }
+    
+    private var enforcementTimer: DispatchSourceTimer?
     
     /// Turns off the built-in display backlight (0.0 nits, hardware-off) for closed-lid mode.
     public func suppressBuiltinBacklight() {
@@ -61,12 +73,37 @@ public final class DisplayController {
         _ = DisplayServicesSetBrightness(displayID, 0.0)
         isBacklightSuppressed = true
         NSLog("[DisplayController] Built-in display backlight suppressed to 0.0 (saved: %.2f)", savedBrightnessCache[displayID] ?? 0.65)
+        
+        // Active clamp: every 0.5s ensure the screen STAYS at 0.0 nits while the lid is closed
+        enforcementTimer?.cancel()
+        let timer = DispatchSource.makeTimerSource(queue: DispatchQueue.global(qos: .userInteractive))
+        timer.schedule(deadline: .now() + 0.15, repeating: 0.5)
+        timer.setEventHandler { [weak self] in
+            guard let self = self, self.isBacklightSuppressed else { return }
+            if ClamshellMonitor.readDirectHardwareLidState() {
+                if let b = self.readBrightness(for: displayID), b > 0.001 {
+                    _ = DisplayServicesSetBrightness(displayID, 0.0)
+                    NSLog("[DisplayController] Clamped brightness back to 0.0 nits (was %.2f)", b)
+                }
+            }
+        }
+        timer.resume()
+        self.enforcementTimer = timer
     }
     
     /// Restores the built-in display backlight to its saved level.
     public func restoreBuiltinBacklight() {
         lock.lock()
         defer { lock.unlock() }
+        
+        // HARD SAFETY CHECK: Never restore backlight if the lid is still physically closed!
+        if ClamshellMonitor.readDirectHardwareLidState() {
+            NSLog("[DisplayController] Refusing to restore backlight: Lid is still physically closed!")
+            return
+        }
+        
+        enforcementTimer?.cancel()
+        enforcementTimer = nil
         
         guard isBacklightSuppressed else { return }
         guard let displayID = getBuiltinDisplayID() else { return }
@@ -81,6 +118,9 @@ public final class DisplayController {
     public func emergencyRestore() {
         lock.lock()
         defer { lock.unlock() }
+        
+        enforcementTimer?.cancel()
+        enforcementTimer = nil
         
         if isBacklightSuppressed, let displayID = getBuiltinDisplayID() {
             let target = savedBrightnessCache[displayID] ?? 0.65

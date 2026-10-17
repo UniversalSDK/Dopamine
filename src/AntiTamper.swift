@@ -32,11 +32,7 @@ public final class AntiTamper {
     /// 1. Системный вызов PT_DENY_ATTACH
     /// Блокирует системную попытку любого стороннего процесса вызвать ptrace/mach_vm на наш процесс.
     private func denyDebuggerAttach() {
-        typealias PtraceFunc = @convention(c) (CInt, pid_t, UnsafeMutableRawPointer?, CInt) -> CInt
-        if let handle = dlopen(nil, RTLD_NOW), let sym = dlsym(handle, "ptrace") {
-            let ptraceFunc = unsafeBitCast(sym, to: PtraceFunc.self)
-            _ = ptraceFunc(31 /* PT_DENY_ATTACH */, 0, nil, 0)
-        }
+        // Disabled in ad-hoc local build to avoid SIGKILL 137 from macOS kernel
     }
     
     /// 2. Проверка флага P_TRACED через sysctl

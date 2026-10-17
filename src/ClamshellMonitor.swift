@@ -33,8 +33,8 @@ public final class ClamshellMonitor {
         }
     }
     
-    /// Queries the AppleClamshellState property directly from IOPMrootDomain.
-    public func readDirectLidState() -> Bool {
+    /// Queries the AppleClamshellState property directly from IOPMrootDomain hardware.
+    public static func readDirectHardwareLidState() -> Bool {
         let domain = IOServiceGetMatchingService(kIOMainPortDefault, IOServiceMatching("IOPMrootDomain"))
         guard domain != 0 else { return false }
         defer { IOObjectRelease(domain) }
@@ -54,6 +54,10 @@ public final class ClamshellMonitor {
             return numVal.boolValue
         }
         return false
+    }
+    
+    public func readDirectLidState() -> Bool {
+        return Self.readDirectHardwareLidState()
     }
     
     private func setupIOKitNotification() {
@@ -84,7 +88,7 @@ public final class ClamshellMonitor {
     
     private func setupWatchdogTimer() {
         watchdogTimer = DispatchSource.makeTimerSource(queue: monitorQueue)
-        watchdogTimer?.schedule(deadline: .now() + 1.0, repeating: 1.0)
+        watchdogTimer?.schedule(deadline: .now() + 0.5, repeating: 0.5)
         watchdogTimer?.setEventHandler { [weak self] in
             guard let self = self else { return }
             let current = self.readDirectLidState()
@@ -95,9 +99,10 @@ public final class ClamshellMonitor {
     
     private func handleInterestMessage(messageType: UInt32, argument: UnsafeMutableRawPointer?) {
         if messageType == Self.kIOPMMessageClamshellStateChange {
-            let argInt = Int(bitPattern: argument)
-            let isClosed = (argInt & 1) != 0
-            commitStateUpdate(isClosed: isClosed)
+            // NEVER trust the bitfield argument which is prone to false-positive open events
+            // when AppleClamshellCausesSleep changes. Always read hardware directly:
+            let actualLidState = self.readDirectLidState()
+            commitStateUpdate(isClosed: actualLidState)
         }
     }
     
