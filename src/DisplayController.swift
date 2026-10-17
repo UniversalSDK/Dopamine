@@ -1,5 +1,7 @@
 import Foundation
 import CoreGraphics
+import IOKit
+import IOKit.pwr_mgt
 
 // MARK: - Private DisplayServices & Login Framework Bindings
 @_silgen_name("DisplayServicesGetBrightness")
@@ -54,7 +56,23 @@ public final class DisplayController {
         return status == 0 ? value : nil
     }
     
-    private var enforcementTimer: DispatchSourceTimer?
+    /// Puts all displays to sleep cleanly using macOS pmset.
+    public func putDisplaysToSleep() {
+        let task = Process()
+        task.executableURL = URL(fileURLWithPath: "/usr/bin/pmset")
+        task.arguments = ["displaysleepnow"]
+        try? task.run()
+    }
+    
+    /// Wakes displays by signaling local user activity to powerd.
+    public func wakeDisplays() {
+        var assertionID: IOPMAssertionID = 0
+        _ = IOPMAssertionDeclareUserActivity(
+            "Dopamine Display Wake" as CFString,
+            kIOPMUserActiveLocal,
+            &assertionID
+        )
+    }
     
     /// Turns off the built-in display backlight (0.0 nits, hardware-off) for closed-lid mode.
     public func suppressBuiltinBacklight() {
@@ -64,31 +82,19 @@ public final class DisplayController {
         guard !isBacklightSuppressed else { return }
         guard let displayID = getBuiltinDisplayID() else { return }
         
-        if let current = readBrightness(for: displayID), current > 0.001 {
+        // 1. Save user's current brightness safely (never save 0)
+        if let current = readBrightness(for: displayID), current > 0.05 {
             savedBrightnessCache[displayID] = current
-        } else if savedBrightnessCache[displayID] == nil {
-            savedBrightnessCache[displayID] = 0.65
+        } else if savedBrightnessCache[displayID] == nil || (savedBrightnessCache[displayID] ?? 0) < 0.05 {
+            savedBrightnessCache[displayID] = 0.75
         }
         
+        // 2. Set brightness to 0.0 and cleanly sleep displays (cuts panel power, stops ALS/CoreBrightness fight)
         _ = DisplayServicesSetBrightness(displayID, 0.0)
+        putDisplaysToSleep()
         isBacklightSuppressed = true
-        NSLog("[DisplayController] Built-in display backlight suppressed to 0.0 (saved: %.2f)", savedBrightnessCache[displayID] ?? 0.65)
         
-        // Active clamp: every 0.5s ensure the screen STAYS at 0.0 nits while the lid is closed
-        enforcementTimer?.cancel()
-        let timer = DispatchSource.makeTimerSource(queue: DispatchQueue.global(qos: .userInteractive))
-        timer.schedule(deadline: .now() + 0.15, repeating: 0.5)
-        timer.setEventHandler { [weak self] in
-            guard let self = self, self.isBacklightSuppressed else { return }
-            if ClamshellMonitor.readDirectHardwareLidState() {
-                if let b = self.readBrightness(for: displayID), b > 0.001 {
-                    _ = DisplayServicesSetBrightness(displayID, 0.0)
-                    NSLog("[DisplayController] Clamped brightness back to 0.0 nits (was %.2f)", b)
-                }
-            }
-        }
-        timer.resume()
-        self.enforcementTimer = timer
+        NSLog("[DisplayController] Built-in display suppressed to 0.0 and put to sleep (saved: %.2f)", savedBrightnessCache[displayID] ?? 0.75)
     }
     
     /// Restores the built-in display backlight to its saved level.
@@ -102,13 +108,15 @@ public final class DisplayController {
             return
         }
         
-        enforcementTimer?.cancel()
-        enforcementTimer = nil
-        
         guard isBacklightSuppressed else { return }
         guard let displayID = getBuiltinDisplayID() else { return }
         
-        let targetBrightness = savedBrightnessCache[displayID] ?? 0.65
+        var targetBrightness = savedBrightnessCache[displayID] ?? 0.75
+        if targetBrightness < 0.15 {
+            targetBrightness = 0.75
+        }
+        
+        wakeDisplays()
         _ = DisplayServicesSetBrightness(displayID, targetBrightness)
         isBacklightSuppressed = false
         NSLog("[DisplayController] Built-in display backlight restored to %.2f", targetBrightness)
@@ -119,11 +127,12 @@ public final class DisplayController {
         lock.lock()
         defer { lock.unlock() }
         
-        enforcementTimer?.cancel()
-        enforcementTimer = nil
-        
         if isBacklightSuppressed, let displayID = getBuiltinDisplayID() {
-            let target = savedBrightnessCache[displayID] ?? 0.65
+            var target = savedBrightnessCache[displayID] ?? 0.75
+            if target < 0.15 {
+                target = 0.75
+            }
+            wakeDisplays()
             _ = DisplayServicesSetBrightness(displayID, target)
             isBacklightSuppressed = false
         }

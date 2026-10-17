@@ -18,6 +18,8 @@ public final class ClamshellMonitor {
     public private(set) var isLidClosed: Bool = false
     public var onStateChange: StateChangeCallback?
     
+    private var debounceWorkItem: DispatchWorkItem?
+    
     public init() {
         self.isLidClosed = readDirectLidState()
     }
@@ -26,10 +28,12 @@ public final class ClamshellMonitor {
         monitorQueue.async { [weak self] in
             guard let self = self else { return }
             self.setupIOKitNotification()
-            self.setupWatchdogTimer()
-            // Immediate check upon starting
             let current = self.readDirectLidState()
-            self.commitStateUpdate(isClosed: current)
+            self.isLidClosed = current
+            let callback = self.onStateChange
+            DispatchQueue.main.async {
+                callback?(current)
+            }
         }
     }
     
@@ -86,40 +90,34 @@ public final class ClamshellMonitor {
         )
     }
     
-    private func setupWatchdogTimer() {
-        watchdogTimer = DispatchSource.makeTimerSource(queue: monitorQueue)
-        watchdogTimer?.schedule(deadline: .now() + 0.5, repeating: 0.5)
-        watchdogTimer?.setEventHandler { [weak self] in
-            guard let self = self else { return }
-            let current = self.readDirectLidState()
-            self.commitStateUpdate(isClosed: current)
-        }
-        watchdogTimer?.resume()
-    }
-    
     private func handleInterestMessage(messageType: UInt32, argument: UnsafeMutableRawPointer?) {
         if messageType == Self.kIOPMMessageClamshellStateChange {
-            // NEVER trust the bitfield argument which is prone to false-positive open events
-            // when AppleClamshellCausesSleep changes. Always read hardware directly:
-            let actualLidState = self.readDirectLidState()
-            commitStateUpdate(isClosed: actualLidState)
+            scheduleStateCheck()
         }
     }
     
-    private func commitStateUpdate(isClosed: Bool) {
-        if isClosed != isLidClosed {
-            isLidClosed = isClosed
-            let callback = self.onStateChange
-            DispatchQueue.main.async {
-                callback?(isClosed)
+    private func scheduleStateCheck() {
+        debounceWorkItem?.cancel()
+        let item = DispatchWorkItem { [weak self] in
+            guard let self = self else { return }
+            let verifiedState = Self.readDirectHardwareLidState()
+            if verifiedState != self.isLidClosed {
+                self.isLidClosed = verifiedState
+                NSLog("[ClamshellMonitor] Hardware lid state settled to: %@", verifiedState ? "CLOSED" : "OPEN")
+                let callback = self.onStateChange
+                DispatchQueue.main.async {
+                    callback?(verifiedState)
+                }
             }
         }
+        debounceWorkItem = item
+        monitorQueue.asyncAfter(deadline: .now() + 0.15, execute: item)
     }
     
     public func stop() {
         monitorQueue.sync {
-            watchdogTimer?.cancel()
-            watchdogTimer = nil
+            debounceWorkItem?.cancel()
+            debounceWorkItem = nil
             
             if notificationObj != 0 {
                 IOObjectRelease(notificationObj)
