@@ -11,7 +11,7 @@
 
 <p align="center">
   <a href="https://dopamine.33rd.pro"><img src="https://img.shields.io/badge/Website-dopamine.33rd.pro-amber?style=flat-square&logo=apple" alt="Website"></a>
-  <a href="https://github.com/UniversalSDK/Dopamine/releases"><img src="https://img.shields.io/badge/Release-v1.2.0-cyan?style=flat-square&logo=github" alt="GitHub Release"></a>
+  <a href="https://github.com/UniversalSDK/Dopamine/releases"><img src="https://img.shields.io/badge/Release-v1.2.1-cyan?style=flat-square&logo=github" alt="GitHub Release"></a>
   <img src="https://img.shields.io/badge/Platform-macOS%2012+-darkgreen?style=flat-square&logo=apple" alt="macOS 12+">
   <img src="https://img.shields.io/badge/Architecture-Apple%20Silicon%20(ARM64)-blue?style=flat-square" alt="Apple Silicon">
   <img src="https://img.shields.io/badge/Languages-11%20Multilingual-purple?style=flat-square" alt="11 Languages">

@@ -59,7 +59,7 @@ public final class AnalyticsManager {
         eventParams["app_name"] = "Dopamine"
         eventParams["chip"] = chipModel
         eventParams["os_version"] = macOSVersion
-        eventParams["app_version"] = "1.2.0"
+        eventParams["app_version"] = "1.2.1"
         eventParams["locale"] = LocalizationManager.shared.activeCode
         
         let payload: [String: Any] = [

@@ -26,7 +26,7 @@ const i18nData = {
     hero_title_p2: "Protect your Liquid Retina screen.",
     hero_subtitle: "The ultimate dual-engine macOS utility. Execute long-running renders, builds, and downloads with the lid closed — while cutting internal display power to absolute 0.0 nits to eliminate heat traps and screen burn.",
     btn_dmg_title: "Download DMG (Apple Silicon)",
-    btn_dmg_sub: "v1.2.0 • macOS 12+ Monterey to Sequoia • 2.6 MB",
+    btn_dmg_sub: "v1.2.1 • macOS 12+ Monterey to Sequoia • 2.6 MB",
     btn_pkg_title: "Download PKG Installer",
     btn_pkg_sub: "Enterprise / IT Admin Deployment",
     brew_label: "Install via Homebrew:",
@@ -143,7 +143,7 @@ const i18nData = {
     hero_title_p2: "Захистіть екран Liquid Retina.",
     hero_subtitle: "Досконала двоядерна утиліта для macOS. Запускайте тривалий рендеринг, білди та завантаження із закритою кришкою — з апаратним вимкненням підсвічування до абсолютних 0.0 ніт для захисту від перегріву екрана.",
     btn_dmg_title: "Завантажити DMG (Apple Silicon)",
-    btn_dmg_sub: "v1.2.0 • macOS 12+ Monterey до Sequoia • 2.6 МБ",
+    btn_dmg_sub: "v1.2.1 • macOS 12+ Monterey до Sequoia • 2.6 МБ",
     btn_pkg_title: "Завантажити інсталятор PKG",
     btn_pkg_sub: "Для корпоративного та системного розгортання",
     brew_label: "Встановлення через Homebrew:",
@@ -260,7 +260,7 @@ const i18nData = {
     hero_title_p2: "Schützen Sie Ihr Liquid Retina Display.",
     hero_subtitle: "Das fortschrittlichste macOS-Dienstprogramm. Führen Sie Renderings, Builds und Downloads bei geschlossenem Deckel aus – mit echter 0,0-Nits-Hintergrundbeleuchtungsabschaltung gegen Hitzestau.",
     btn_dmg_title: "DMG herunterladen (Apple Silicon)",
-    btn_dmg_sub: "v1.2.0 • macOS 12+ Monterey bis Sequoia • 2.6 MB",
+    btn_dmg_sub: "v1.2.1 • macOS 12+ Monterey bis Sequoia • 2.6 MB",
     btn_pkg_title: "PKG-Installer herunterladen",
     btn_pkg_sub: "Enterprise- & IT-Bereitstellung",
     brew_label: "Installation via Homebrew:",
@@ -377,7 +377,7 @@ const i18nData = {
     hero_title_p2: "Protégez votre écran Liquid Retina.",
     hero_subtitle: "L'utilitaire macOS nouvelle génération. Effectuez vos rendus, compilations et téléchargements avec le capot fermé, grâce à l'extinction matérielle à 0,0 nits contre la surchauffe.",
     btn_dmg_title: "Télécharger DMG (Apple Silicon)",
-    btn_dmg_sub: "v1.2.0 • macOS 12+ Monterey à Sequoia • 2.6 Mo",
+    btn_dmg_sub: "v1.2.1 • macOS 12+ Monterey à Sequoia • 2.6 Mo",
     btn_pkg_title: "Télécharger le package PKG",
     btn_pkg_sub: "Déploiement Entreprise & Admin IT",
     brew_label: "Installation via Homebrew :",
@@ -494,7 +494,7 @@ const i18nData = {
     hero_title_p2: "Liquid Retinaディスプレイを守る。",
     hero_subtitle: "次世代のmacOSスリープ制御ユーティリティ。クラムシェル（画面を閉じた状態）でも、バックライトを物理的に0.0ニトまで完全に消灯。発熱によるキーボードと液晶コーティングの熱損傷を防ぎます。",
     btn_dmg_title: "DMGをダウンロード (Apple Silicon)",
-    btn_dmg_sub: "v1.2.0 • macOS 12+ Monterey〜Sequoia • 2.6 MB",
+    btn_dmg_sub: "v1.2.1 • macOS 12+ Monterey〜Sequoia • 2.6 MB",
     btn_pkg_title: "PKGインストーラーをダウンロード",
     btn_pkg_sub: "エンタープライズ / IT管理者向け",
     brew_label: "Homebrewでインストール:",
@@ -611,7 +611,7 @@ const i18nData = {
     hero_title_p2: "Protege tu pantalla Liquid Retina.",
     hero_subtitle: "La utilidad definitiva para macOS. Ejecuta renders y descargas con la tapa cerrada: apagado de hardware a 0.0 nits para eliminar trampas de calor y cuidar tu pantalla.",
     btn_dmg_title: "Descargar DMG (Apple Silicon)",
-    btn_dmg_sub: "v1.2.0 • macOS 12+ Monterey a Sequoia • 2.6 MB",
+    btn_dmg_sub: "v1.2.1 • macOS 12+ Monterey a Sequoia • 2.6 MB",
     btn_pkg_title: "Descargar instalador PKG",
     btn_pkg_sub: "Despliegue empresarial y administradores TI",
     brew_label: "Instalar con Homebrew:",
@@ -728,7 +728,7 @@ const i18nData = {
     hero_title_p2: "保护 Liquid Retina 视网膜屏幕。",
     hero_subtitle: "新一代 macOS 防休眠与屏幕保护神器。支持合盖状态下持续渲染、编译与下载，同时硬件级将内屏背光切断至真正的 0.0 尼特，杜绝热量积聚与屏幕涂层损坏。",
     btn_dmg_title: "下载 DMG (Apple Silicon)",
-    btn_dmg_sub: "v1.2.0 • macOS 12+ Monterey 至 Sequoia • 2.6 MB",
+    btn_dmg_sub: "v1.2.1 • macOS 12+ Monterey 至 Sequoia • 2.6 MB",
     btn_pkg_title: "下载 PKG 安装包",
     btn_pkg_sub: "企业与 IT 批量部署专用",
     brew_label: "通过 Homebrew 安装:",
@@ -845,7 +845,7 @@ const i18nData = {
     hero_title_p2: "Proteggi il display Liquid Retina.",
     hero_subtitle: "La nuova generazione di utility per macOS. Esegui render, build e download a coperchio chiuso, con spegnimento hardware della retroilluminazione a 0.0 nits per evitare surriscaldamenti.",
     btn_dmg_title: "Scarica DMG (Apple Silicon)",
-    btn_dmg_sub: "v1.2.0 • macOS 12+ Monterey a Sequoia • 2.6 MB",
+    btn_dmg_sub: "v1.2.1 • macOS 12+ Monterey a Sequoia • 2.6 MB",
     btn_pkg_title: "Scarica programma d'installazione PKG",
     btn_pkg_sub: "Per distribuzioni aziendali e IT",
     brew_label: "Installa tramite Homebrew:",
@@ -962,7 +962,7 @@ const i18nData = {
     hero_title_p2: "Proteja o ecrã Liquid Retina.",
     hero_subtitle: "O utilitário definitivo para macOS. Execute tarefas com a tampa fechada, desligando fisicamente a luz de fundo a 0.0 nits para eliminar o calor acumulado no teclado e ecrã.",
     btn_dmg_title: "Descarregar DMG (Apple Silicon)",
-    btn_dmg_sub: "v1.2.0 • macOS 12+ Monterey a Sequoia • 2.6 MB",
+    btn_dmg_sub: "v1.2.1 • macOS 12+ Monterey a Sequoia • 2.6 MB",
     btn_pkg_title: "Descarregar Instalador PKG",
     btn_pkg_sub: "Implantação Empresarial & Administradores",
     brew_label: "Instalar via Homebrew:",
@@ -1079,7 +1079,7 @@ const i18nData = {
     hero_title_p2: "Liquid Retina 화면을 보호하세요.",
     hero_subtitle: "차세대 macOS 절전 제어 유틸리티. 상판을 닫은 상태에서도 하드웨어 백라이트를 물리적으로 0.0니트까지 완전히 차단하여 키보드 열 축적과 코팅 손상을 방지합니다.",
     btn_dmg_title: "DMG 다운로드 (Apple Silicon)",
-    btn_dmg_sub: "v1.2.0 • macOS 12+ Monterey부터 Sequoia • 2.6 MB",
+    btn_dmg_sub: "v1.2.1 • macOS 12+ Monterey부터 Sequoia • 2.6 MB",
     btn_pkg_title: "PKG 설치 프로그램 다운로드",
     btn_pkg_sub: "기업 및 IT 관리자 배포용",
     brew_label: "Homebrew로 설치:",
@@ -1196,7 +1196,7 @@ const i18nData = {
     hero_title_p2: "Защитите экран Liquid Retina.",
     hero_subtitle: "Совершенная двухъядерная утилита для macOS. Запускайте долгий рендеринг, сборку кода и загрузки с закрытой крышкой — с аппаратным отключением подсветки до абсолютных 0.0 нит для защиты от теплового перегрева матрицы.",
     btn_dmg_title: "Скачать DMG (Apple Silicon)",
-    btn_dmg_sub: "v1.2.0 • macOS 12+ Monterey до Sequoia • 2.6 МБ",
+    btn_dmg_sub: "v1.2.1 • macOS 12+ Monterey до Sequoia • 2.6 МБ",
     btn_pkg_title: "Скачать установщик PKG",
     btn_pkg_sub: "Корпоративное и системное развертывание",
     brew_label: "Установка через Homebrew:",
@@ -1605,7 +1605,7 @@ function setupDownloadTracking() {
     if (btn) {
       btn.addEventListener('click', () => {
         trackEvent('download_dmg_click', {
-          version: '1.2.0',
+          version: '1.2.1',
           file: 'Dopamine.dmg'
         });
       });
@@ -1616,7 +1616,7 @@ function setupDownloadTracking() {
   if (pkgBtn) {
     pkgBtn.addEventListener('click', () => {
       trackEvent('download_pkg_click', {
-        version: '1.2.0',
+        version: '1.2.1',
         file: 'Dopamine-Installer.pkg'
       });
     });

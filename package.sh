@@ -3,7 +3,7 @@ set -e
 
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 APP_NAME="Dopamine"
-VERSION="1.2.0"
+VERSION="1.2.1"
 DIST_DIR="$DIR/dist"
 BUNDLE_PATH="$DIR/build/$APP_NAME.app"
 
@@ -31,7 +31,12 @@ if [ -n "$SIGN_IDENTITY" ]; then
     codesign --force --timestamp --sign "$SIGN_IDENTITY" "$DIST_DIR/$APP_NAME.dmg"
 fi
 
-# 3. Build PKG
+# 3. Build ZIP for silent in-place auto-update
+echo "Creating $APP_NAME.zip for silent auto-updater..."
+rm -f "$DIST_DIR/$APP_NAME.zip"
+ditto -c -k --keepParent "$BUNDLE_PATH" "$DIST_DIR/$APP_NAME.zip"
+
+# 4. Build PKG
 echo "Creating $APP_NAME-Installer.pkg..."
 rm -f "$DIST_DIR/$APP_NAME-Installer.pkg"
 export COPYFILE_DISABLE=1
@@ -41,22 +46,26 @@ pkgbuild --root "$DIR/build" \
          --version "$VERSION" \
          "$DIST_DIR/$APP_NAME-Installer.pkg"
 
-# 4. Generate SHA-256 Checksums
+# 5. Generate SHA-256 Checksums
 echo "Generating SHA-256 Checksums..."
 DMG_SHA256=$(shasum -a 256 "$DIST_DIR/$APP_NAME.dmg" | awk '{print $1}')
-echo "$DMG_SHA256  $APP_NAME.dmg" > "$DIST_DIR/checksums.txt"
-shasum -a 256 "$DIST_DIR/$APP_NAME-Installer.pkg" >> "$DIST_DIR/checksums.txt"
+ZIP_SHA256=$(shasum -a 256 "$DIST_DIR/$APP_NAME.zip" | awk '{print $1}')
+PKG_SHA256=$(shasum -a 256 "$DIST_DIR/$APP_NAME-Installer.pkg" | awk '{print $1}')
 
-# 5. Generate Homebrew Cask Formula (dopamine.rb)
+echo "$DMG_SHA256  $APP_NAME.dmg" > "$DIST_DIR/checksums.txt"
+echo "$ZIP_SHA256  $APP_NAME.zip" >> "$DIST_DIR/checksums.txt"
+echo "$PKG_SHA256  $APP_NAME-Installer.pkg" >> "$DIST_DIR/checksums.txt"
+
+# 6. Generate Homebrew Cask Formula (dopamine.rb)
 cat <<EOF > "$DIST_DIR/dopamine.rb"
 cask "dopamine" do
   version "$VERSION"
   sha256 "$DMG_SHA256"
 
-  url "https://github.com/alexey/Dopamine/releases/download/v#{version}/Dopamine.dmg"
+  url "https://dopamine.33rd.pro/Dopamine.dmg"
   name "Dopamine"
   desc "Keep-awake power utility with closed-lid display backlight cutoff for Apple Silicon"
-  homepage "https://github.com/alexey/Dopamine"
+  homepage "https://dopamine.33rd.pro"
 
   auto_updates true
   depends_on macos: ">= :monterey"
@@ -73,25 +82,44 @@ cask "dopamine" do
 end
 EOF
 
-# 6. Generate OTA Update Manifest (latest.json)
+# Copy formula to root and web
+cp "$DIST_DIR/dopamine.rb" "$DIR/dopamine.rb"
+if [ -d "$DIR/web" ]; then
+    cp "$DIST_DIR/dopamine.rb" "$DIR/web/dopamine.rb"
+fi
+
+# 7. Generate OTA Update Manifest (latest.json)
 cat <<EOF > "$DIST_DIR/latest.json"
 {
   "version": "$VERSION",
-  "build": 12,
+  "build": 13,
   "releaseDate": "$(date -u +"%Y-%m-%dT%H:%M:%SZ")",
-  "downloadUrl": "https://github.com/alexey/Dopamine/releases/download/v$VERSION/Dopamine.dmg",
+  "downloadUrl": "https://dopamine.33rd.pro/Dopamine.dmg",
+  "zipUrl": "https://dopamine.33rd.pro/Dopamine.zip",
+  "githubDownloadUrl": "https://github.com/UniversalSDK/Dopamine/releases/download/v$VERSION/Dopamine.dmg",
+  "githubZipUrl": "https://github.com/UniversalSDK/Dopamine/releases/download/v$VERSION/Dopamine.zip",
   "sha256": "$DMG_SHA256",
-  "releaseNotes": "Dopamine v$VERSION (Apple Silicon Edition): Pure native Swift keep-awake utility with dual-mode hardware backlight cutoff, 11 languages, battery safeguards, and zero-nit clamshell mode.",
+  "zipSha256": "$ZIP_SHA256",
+  "releaseNotes": "Dopamine v$VERSION: Fixes display flickering under closed lid with native DPMS sleep; adds seamless silent in-place background auto-updates.",
   "minOS": "12.0"
 }
 EOF
 
-# 7. Copy release artifacts and landing page to Desktop for convenient access
+# Copy latest.json to root, releases folder (for github raw), and web
+mkdir -p "$DIR/releases"
+cp "$DIST_DIR/latest.json" "$DIR/releases/latest.json"
+cp "$DIST_DIR/latest.json" "$DIR/latest.json"
+if [ -d "$DIR/web" ]; then
+    cp "$DIST_DIR/latest.json" "$DIR/web/latest.json"
+fi
+
+# 8. Copy release artifacts and landing page to Desktop for convenient access
 DESKTOP_DIR="/Users/alexey/Desktop/Dopamine"
 rm -rf "$DESKTOP_DIR"
 mkdir -p "$DESKTOP_DIR"
 cp -R "$BUNDLE_PATH" "$DESKTOP_DIR/"
 cp "$DIST_DIR/$APP_NAME.dmg" "$DESKTOP_DIR/"
+cp "$DIST_DIR/$APP_NAME.zip" "$DESKTOP_DIR/"
 cp "$DIST_DIR/$APP_NAME-Installer.pkg" "$DESKTOP_DIR/"
 cp "$DIST_DIR/dopamine.rb" "$DESKTOP_DIR/"
 cp "$DIST_DIR/latest.json" "$DESKTOP_DIR/"
@@ -102,8 +130,5 @@ if [ -d "$DIR/web" ]; then
     cp -R "$DIR/web" "$DESKTOP_DIR/landing"
 fi
 
-# Clean up previous folders
-rm -rf "/Users/alexey/Desktop/AmphiGuard" "/Users/alexey/Desktop/LidGuard"
-
 echo "=== Distribution packages and Landing created in $DIST_DIR and $DESKTOP_DIR ==="
-ls -lh "$DESKTOP_DIR"
+ls -lh "$DIST_DIR"

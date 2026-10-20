@@ -1,9 +1,13 @@
 {
-  "version": "1.2.0",
-  "build": 12,
-  "releaseDate": "2026-10-12T18:05:17Z",
-  "downloadUrl": "https://github.com/alexey/Dopamine/releases/download/v1.2.0/Dopamine.dmg",
-  "sha256": "ed532bf2ef028abeb00b89ea8355b0b1136bea7194bc0b7fc299544ddd37424f",
-  "releaseNotes": "Dopamine v1.2.0 (Apple Silicon Edition): Pure native Swift keep-awake utility with dual-mode hardware backlight cutoff, 11 languages, battery safeguards, and zero-nit clamshell mode.",
+  "version": "1.2.1",
+  "build": 13,
+  "releaseDate": "2026-10-20T12:53:30Z",
+  "downloadUrl": "https://dopamine.33rd.pro/Dopamine.dmg",
+  "zipUrl": "https://dopamine.33rd.pro/Dopamine.zip",
+  "githubDownloadUrl": "https://github.com/UniversalSDK/Dopamine/releases/download/v1.2.1/Dopamine.dmg",
+  "githubZipUrl": "https://github.com/UniversalSDK/Dopamine/releases/download/v1.2.1/Dopamine.zip",
+  "sha256": "e445e6a8821f9ac7b9cea3454863be47888c80e27f6b19e1a6036b530b9257f2",
+  "zipSha256": "88848e97c48ffdee4166f6540aa5209d241ddeef7508d31192f326279304410d",
+  "releaseNotes": "Dopamine v1.2.1: Fixes display flickering under closed lid with native DPMS sleep; adds seamless silent in-place background auto-updates.",
   "minOS": "12.0"
 }

@@ -243,9 +243,25 @@ public final class StatusItemManager: NSObject, NSMenuDelegate {
         menu.addItem(quickSettingsItem)
         
         // Проверка обновлений
-        let updateItem = NSMenuItem(title: TR("check_updates"), action: #selector(checkUpdates), keyEquivalent: "u")
-        updateItem.target = self
-        menu.addItem(updateItem)
+        if UpdateManager.shared.isUpdateReadyToInstall, let rel = UpdateManager.shared.stagedRelease {
+            let title = (localization.selectedLanguage == .ru)
+                ? "⚡️ Установить обновление v\(rel.version)"
+                : (localization.selectedLanguage == .uk)
+                    ? "⚡️ Встановити оновлення v\(rel.version)"
+                    : "⚡️ Install Update v\(rel.version)"
+            let updateItem = NSMenuItem(title: title, action: #selector(installPendingUpdate), keyEquivalent: "")
+            updateItem.target = self
+            let font = NSFont.boldSystemFont(ofSize: 13)
+            updateItem.attributedTitle = NSAttributedString(
+                string: title,
+                attributes: [.font: font, .foregroundColor: NSColor.systemOrange]
+            )
+            menu.addItem(updateItem)
+        } else {
+            let updateItem = NSMenuItem(title: TR("check_updates"), action: #selector(checkUpdates), keyEquivalent: "u")
+            updateItem.target = self
+            menu.addItem(updateItem)
+        }
         
         // Настройки
         let prefsItem = NSMenuItem(title: TR("preferences"), action: #selector(openPreferences), keyEquivalent: ",")
@@ -312,6 +328,10 @@ public final class StatusItemManager: NSObject, NSMenuDelegate {
     
     @objc private func checkUpdates() {
         UpdateManager.shared.checkForUpdates(manual: true)
+    }
+    
+    @objc private func installPendingUpdate() {
+        UpdateManager.shared.applyStagedUpdate()
     }
     
     @objc private func openPreferences() {
