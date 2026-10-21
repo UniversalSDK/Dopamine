@@ -31,6 +31,26 @@ if [ -n "$SIGN_IDENTITY" ]; then
     codesign --force --timestamp --sign "$SIGN_IDENTITY" "$DIST_DIR/$APP_NAME.dmg"
 fi
 
+# Apple Notarization
+AUTH_KEY="$HOME/.private_keys/AuthKey_X5SJQ3X247.p8"
+KEY_ID="X5SJQ3X247"
+ISSUER_ID="0635b165-8df6-4c3e-a41b-db9da323cbf1"
+
+if [ -f "$AUTH_KEY" ] && [ -n "$SIGN_IDENTITY" ]; then
+    echo "Submitting $APP_NAME.dmg to Apple Notary Service..."
+    xcrun notarytool submit "$DIST_DIR/$APP_NAME.dmg" \
+        --key "$AUTH_KEY" \
+        --key-id "$KEY_ID" \
+        --issuer "$ISSUER_ID" \
+        --wait
+
+    echo "Stapling notarization ticket to $APP_NAME.dmg..."
+    xcrun stapler staple "$DIST_DIR/$APP_NAME.dmg"
+
+    echo "Stapling notarization ticket to $BUNDLE_PATH..."
+    xcrun stapler staple "$BUNDLE_PATH" || true
+fi
+
 # 3. Build ZIP for silent in-place auto-update
 echo "Creating $APP_NAME.zip for silent auto-updater..."
 rm -f "$DIST_DIR/$APP_NAME.zip"

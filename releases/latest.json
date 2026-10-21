@@ -1,13 +1,13 @@
 {
   "version": "1.2.1",
   "build": 13,
-  "releaseDate": "2026-10-20T12:53:30Z",
+  "releaseDate": "2026-10-21T16:51:42Z",
   "downloadUrl": "https://dopamine.33rd.pro/Dopamine.dmg",
   "zipUrl": "https://dopamine.33rd.pro/Dopamine.zip",
   "githubDownloadUrl": "https://github.com/UniversalSDK/Dopamine/releases/download/v1.2.1/Dopamine.dmg",
   "githubZipUrl": "https://github.com/UniversalSDK/Dopamine/releases/download/v1.2.1/Dopamine.zip",
-  "sha256": "e445e6a8821f9ac7b9cea3454863be47888c80e27f6b19e1a6036b530b9257f2",
-  "zipSha256": "88848e97c48ffdee4166f6540aa5209d241ddeef7508d31192f326279304410d",
+  "sha256": "6d7ffba5a0b40032ff79a26d4ab0490e43f1fd4cf4bb207d7bed3baeafe2cb30",
+  "zipSha256": "c61e71383b335e394998f8bd18989c3b716b5196fd0c32ed33d614525a5edc46",
   "releaseNotes": "Dopamine v1.2.1: Fixes display flickering under closed lid with native DPMS sleep; adds seamless silent in-place background auto-updates.",
   "minOS": "12.0"
 }
