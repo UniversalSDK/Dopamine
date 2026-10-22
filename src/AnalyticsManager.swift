@@ -61,6 +61,9 @@ public final class AnalyticsManager {
         eventParams["os_version"] = macOSVersion
         eventParams["app_version"] = "1.2.1"
         eventParams["locale"] = LocalizationManager.shared.activeCode
+        if eventParams["engagement_time_msec"] == nil {
+            eventParams["engagement_time_msec"] = 1000
+        }
         
         let payload: [String: Any] = [
             "client_id": clientId,
