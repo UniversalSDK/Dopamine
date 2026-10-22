@@ -16,6 +16,7 @@
   <img src="https://img.shields.io/badge/Architecture-Apple%20Silicon%20(ARM64)-blue?style=flat-square" alt="Apple Silicon">
   <img src="https://img.shields.io/badge/Languages-11%20Multilingual-purple?style=flat-square" alt="11 Languages">
   <img src="https://img.shields.io/badge/License-MIT-lightgrey?style=flat-square" alt="MIT License">
+  <a href="https://github.com/jaywcjlove/awesome-swift-macos-apps#menubar"><img src="https://awesome.re/mentioned-badge.svg" alt="Mentioned in Awesome Swift macOS Apps"></a>
 </p>
 
 ---
