@@ -226,6 +226,13 @@ public final class StatusItemManager: NSObject, NSMenuDelegate {
         
         quickMenu.addItem(NSMenuItem.separator())
         
+        let qLaunchAtLogin = NSMenuItem(title: TR("launch_at_login"), action: #selector(toggleLaunchAtLogin), keyEquivalent: "")
+        qLaunchAtLogin.target = self
+        qLaunchAtLogin.state = LaunchAtLoginHelper.isEnabled ? .on : .off
+        quickMenu.addItem(qLaunchAtLogin)
+        
+        quickMenu.addItem(NSMenuItem.separator())
+        
         // Быстрый переключатель языка
         let langMenuItem = NSMenuItem(title: TR("menu_language"), action: nil, keyEquivalent: "")
         let langMenu = NSMenu()
@@ -319,6 +326,7 @@ public final class StatusItemManager: NSObject, NSMenuDelegate {
     @objc private func toggleLowBatt() { settings.endSessionOnLowBattery.toggle() }
     @objc private func toggleOnlyOnAC() { settings.allowOnlyOnAC.toggle() }
     @objc private func toggleStopDisconnect() { settings.stopSessionOnACDisconnect.toggle() }
+    @objc private func toggleLaunchAtLogin() { LaunchAtLoginHelper.isEnabled.toggle() }
     
     @objc private func changeLanguageQuick(_ sender: NSMenuItem) {
         if let lang = sender.representedObject as? LocalizationManager.Language {

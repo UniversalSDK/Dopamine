@@ -121,6 +121,7 @@ public final class LocalizationManager {
     private let strings: [String: [String: String]] = [
         "en": [
             "lock_screen": "Lock Screen on Lid Close",
+            "launch_at_login": "Launch Dopamine automatically at login",
             "clamshell_header": "Closed-Display Mode (Clamshell):",
             "update_latest": "You are using the latest version of Dopamine (%@).",
             "btn_download": "Download Update",
@@ -192,6 +193,7 @@ public final class LocalizationManager {
         ],
         "uk": [
             "lock_screen": "Блокувати екран при закритті кришки",
+            "launch_at_login": "Запускати Dopamine автоматично при вході в систему",
             "clamshell_header": "Режим закритої кришки (Clamshell):",
             "update_latest": "У вас встановлена найновіша версія (%@).",
             "btn_download": "Завантажити оновлення",
@@ -263,6 +265,7 @@ public final class LocalizationManager {
         ],
         "de": [
             "lock_screen": "Bildschirm beim Zuklappen sperren",
+            "launch_at_login": "Dopamine bei der Anmeldung automatisch starten",
             "clamshell_header": "Geschlossener Display-Modus (Clamshell):",
             "update_latest": "Sie verwenden die neueste Version von Dopamine (%@).",
             "btn_download": "Update laden",
@@ -334,6 +337,7 @@ public final class LocalizationManager {
         ],
         "fr": [
             "lock_screen": "Verrouiller l'écran à la fermeture du capot",
+            "launch_at_login": "Lancer Dopamine automatiquement à la connexion",
             "clamshell_header": "Mode capot fermé (Clamshell) :",
             "update_latest": "Vous utilisez la version la plus récente d'Dopamine (%@).",
             "btn_download": "Télécharger la mise à jour",
@@ -405,6 +409,7 @@ public final class LocalizationManager {
         ],
         "ja": [
             "lock_screen": "リッドクローズ時に画面をロック",
+            "launch_at_login": "ログイン時に Dopamine を自動起動する",
             "clamshell_header": "クラムシェルモード (閉じた状態):",
             "update_latest": "最新バージョン (%@) を使用しています。",
             "btn_download": "アップデートをダウンロード",
@@ -476,6 +481,7 @@ public final class LocalizationManager {
         ],
         "es": [
             "lock_screen": "Bloquear pantalla al cerrar la tapa",
+            "launch_at_login": "Iniciar Dopamine automáticamente al iniciar sesión",
             "clamshell_header": "Modo de pantalla cerrada (Clamshell):",
             "update_latest": "Tiene instalada la versión más reciente (%@).",
             "btn_download": "Descargar actualización",
@@ -618,6 +624,7 @@ public final class LocalizationManager {
         ],
         "it": [
             "lock_screen": "Blocca schermo alla chiusura del coperchio",
+            "launch_at_login": "Avvia Dopamine automaticamente all'accesso",
             "clamshell_header": "Modalità a schermo chiuso (Clamshell):",
             "update_latest": "Stai utilizzando l'ultima versione (%@).",
             "btn_download": "Scarica aggiornamento",
@@ -689,6 +696,7 @@ public final class LocalizationManager {
         ],
         "pt": [
             "lock_screen": "Bloquear tela ao fechar a tampa",
+            "launch_at_login": "Iniciar o Dopamine automaticamente ao iniciar a sessão",
             "clamshell_header": "Modo de tela fechada (Clamshell):",
             "update_latest": "Você está usando a versão mais recente (%@).",
             "btn_download": "Baixar atualização",
@@ -760,6 +768,7 @@ public final class LocalizationManager {
         ],
         "ko": [
             "lock_screen": "덮개를 닫을 때 화면 잠금",
+            "launch_at_login": "로그인 시 Dopamine 자동 시작",
             "clamshell_header": "덮개 닫힘 모드 (Clamshell):",
             "update_latest": "최신 버전(%@)을 사용 중입니다.",
             "btn_download": "업데이트 다운로드",
@@ -831,6 +840,7 @@ public final class LocalizationManager {
         ],
         "ru": [
             "lock_screen": "Блокировать экран при закрытии крышки",
+            "launch_at_login": "Запускать Dopamine автоматически при входе в систему",
             "clamshell_header": "Режим закрытой крышки (Clamshell):",
             "update_latest": "У вас установлена последняя актуальная версия (%@).",
             "btn_download": "Загрузить обновление",

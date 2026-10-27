@@ -30,6 +30,7 @@ public final class PreferencesWindowController: NSWindowController {
     }
     
     public func show() {
+        AnalyticsManager.shared.trackPreferencesOpen()
         if self.window == nil {
             createPreferencesWindow()
         } else {
@@ -245,7 +246,14 @@ public final class PreferencesWindowController: NSWindowController {
         langPopup.target = self
         langPopup.action = #selector(languageChanged(_:))
         view.addSubview(langPopup)
-        y -= 45
+        y -= 38
+        
+        // Секция автозапуска при входе в macOS (Launch at Login)
+        let chkLaunchAtLogin = NSButton(checkboxWithTitle: TR("launch_at_login"), target: self, action: #selector(toggleLaunchAtLogin(_:)))
+        chkLaunchAtLogin.state = LaunchAtLoginHelper.isEnabled ? .on : .off
+        chkLaunchAtLogin.frame = NSRect(x: 16, y: y, width: 480, height: 20)
+        view.addSubview(chkLaunchAtLogin)
+        y -= 38
         
         // Секция обновлений
         let updateHeader = NSTextField(labelWithString: TR("updates_header"))
@@ -345,6 +353,7 @@ public final class PreferencesWindowController: NSWindowController {
     @objc private func toggleStartOnAC(_ sender: NSButton) { settings.startSessionOnACConnect = (sender.state == .on) }
     @objc private func toggleAutoUpdates(_ sender: NSButton) { updateManager.isAutoCheckEnabled = (sender.state == .on) }
     @objc private func toggleAnalytics(_ sender: NSButton) { analytics.isEnabled = (sender.state == .on) }
+    @objc private func toggleLaunchAtLogin(_ sender: NSButton) { LaunchAtLoginHelper.isEnabled = (sender.state == .on) }
     
     @objc private func thresholdChanged(_ sender: NSPopUpButton) {
         let title = sender.titleOfSelectedItem ?? "10%"
