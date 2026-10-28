@@ -1,13 +1,13 @@
 {
-  "version": "1.2.1",
-  "build": 13,
-  "releaseDate": "2026-10-21T16:51:42Z",
+  "version": "1.2.3",
+  "build": 15,
+  "releaseDate": "2026-10-28T00:05:40Z",
   "downloadUrl": "https://dopamine.33rd.pro/Dopamine.dmg",
   "zipUrl": "https://dopamine.33rd.pro/Dopamine.zip",
-  "githubDownloadUrl": "https://github.com/UniversalSDK/Dopamine/releases/download/v1.2.1/Dopamine.dmg",
-  "githubZipUrl": "https://github.com/UniversalSDK/Dopamine/releases/download/v1.2.1/Dopamine.zip",
-  "sha256": "6d7ffba5a0b40032ff79a26d4ab0490e43f1fd4cf4bb207d7bed3baeafe2cb30",
-  "zipSha256": "c61e71383b335e394998f8bd18989c3b716b5196fd0c32ed33d614525a5edc46",
-  "releaseNotes": "Dopamine v1.2.1: Fixes display flickering under closed lid with native DPMS sleep; adds seamless silent in-place background auto-updates.",
+  "githubDownloadUrl": "https://github.com/UniversalSDK/Dopamine/releases/download/v1.2.3/Dopamine.dmg",
+  "githubZipUrl": "https://github.com/UniversalSDK/Dopamine/releases/download/v1.2.3/Dopamine.zip",
+  "sha256": "eb42179038c3d543268e17625d6aebe6c49586dcc440c983c0c2bda8f9680134",
+  "zipSha256": "741e40f8d95551ac310fe069dd71aa9b9aedd8ecd78559ed82d52d46fcc8bcad",
+  "releaseNotes": "Dopamine v1.2.3: Adds Launch at Login setting; removes Keychain password prompts for smooth seamless experience.",
   "minOS": "12.0"
 }

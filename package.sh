@@ -3,7 +3,8 @@ set -e
 
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 APP_NAME="Dopamine"
-VERSION="1.2.1"
+VERSION="1.2.3"
+BUILD_NUM="15"
 DIST_DIR="$DIR/dist"
 BUNDLE_PATH="$DIR/build/$APP_NAME.app"
 
@@ -112,7 +113,7 @@ fi
 cat <<EOF > "$DIST_DIR/latest.json"
 {
   "version": "$VERSION",
-  "build": 13,
+  "build": $BUILD_NUM,
   "releaseDate": "$(date -u +"%Y-%m-%dT%H:%M:%SZ")",
   "downloadUrl": "https://dopamine.33rd.pro/Dopamine.dmg",
   "zipUrl": "https://dopamine.33rd.pro/Dopamine.zip",
@@ -120,7 +121,7 @@ cat <<EOF > "$DIST_DIR/latest.json"
   "githubZipUrl": "https://github.com/UniversalSDK/Dopamine/releases/download/v$VERSION/Dopamine.zip",
   "sha256": "$DMG_SHA256",
   "zipSha256": "$ZIP_SHA256",
-  "releaseNotes": "Dopamine v$VERSION: Fixes display flickering under closed lid with native DPMS sleep; adds seamless silent in-place background auto-updates.",
+  "releaseNotes": "Dopamine v$VERSION: Adds Launch at Login setting; removes Keychain password prompts for smooth seamless experience.",
   "minOS": "12.0"
 }
 EOF

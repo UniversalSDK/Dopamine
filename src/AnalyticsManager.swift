@@ -13,7 +13,21 @@ public final class AnalyticsManager {
     private let enabledKey = "analytics_enabled"
     private let session = URLSession(configuration: .ephemeral)
     
+    // Поддержка сессий GA4 (Measurement Protocol требует session_id для подсчета activeUsers и sessions)
+    private var currentSessionId: Int64 = Int64(Date().timeIntervalSince1970)
+    private var lastEventTimestamp: TimeInterval = Date().timeIntervalSince1970
+    
     public init() {}
+    
+    public var sessionId: Int64 {
+        let now = Date().timeIntervalSince1970
+        // Если прошло более 30 минут бездействия — генерируем новый session_id (стандарт GA4)
+        if now - lastEventTimestamp > 1800 {
+            currentSessionId = Int64(now)
+        }
+        lastEventTimestamp = now
+        return currentSessionId
+    }
     
     public var isEnabled: Bool {
         get {
@@ -52,14 +66,15 @@ public final class AnalyticsManager {
     }
     
     /// Отправка события в GA4 Measurement Protocol
-    public func trackEvent(name: String, parameters: [String: Any] = [:]) {
+    public func trackEvent(name: String, parameters: [String: Any] = [:], synchronous: Bool = false) {
         guard isEnabled else { return }
         
         var eventParams: [String: Any] = parameters
+        eventParams["session_id"] = sessionId
         eventParams["app_name"] = "Dopamine"
         eventParams["chip"] = chipModel
         eventParams["os_version"] = macOSVersion
-        eventParams["app_version"] = "1.2.1"
+        eventParams["app_version"] = "1.2.2"
         eventParams["locale"] = LocalizationManager.shared.activeCode
         if eventParams["engagement_time_msec"] == nil {
             eventParams["engagement_time_msec"] = 1000
@@ -86,21 +101,42 @@ public final class AnalyticsManager {
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.httpBody = jsonData
-        request.timeoutInterval = 10.0
+        request.timeoutInterval = synchronous ? 2.0 : 10.0
         
-        let task = session.dataTask(with: request) { _, response, error in
-            if let error = error {
-                NSLog("[Analytics] Failed to send event %@: %@", name, error.localizedDescription)
-            } else if let httpResponse = response as? HTTPURLResponse {
-                NSLog("[Analytics] Event %@ dispatched (status: %d)", name, httpResponse.statusCode)
+        if synchronous {
+            let semaphore = DispatchSemaphore(value: 0)
+            let task = session.dataTask(with: request) { _, _, _ in
+                semaphore.signal()
             }
+            task.resume()
+            _ = semaphore.wait(timeout: .now() + 1.5)
+        } else {
+            let task = session.dataTask(with: request) { _, response, error in
+                if let error = error {
+                    NSLog("[Analytics] Failed to send event %@: %@", name, error.localizedDescription)
+                } else if let httpResponse = response as? HTTPURLResponse {
+                    NSLog("[Analytics] Event %@ dispatched (status: %d)", name, httpResponse.statusCode)
+                }
+            }
+            task.resume()
         }
-        task.resume()
     }
     
     // Быстрые методы для ключевых событий
     public func trackAppLaunch() {
         trackEvent(name: "app_launch")
+    }
+    
+    public func trackFirstLaunch() {
+        trackEvent(name: "first_launch")
+    }
+    
+    public func trackAppQuit() {
+        trackEvent(name: "app_quit", synchronous: true)
+    }
+    
+    public func trackPreferencesOpen() {
+        trackEvent(name: "preferences_open")
     }
     
     public func trackSessionStart(durationSeconds: Int, isAC: Bool) {
