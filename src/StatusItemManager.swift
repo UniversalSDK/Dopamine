@@ -6,6 +6,7 @@ public final class StatusItemManager: NSObject, NSMenuDelegate {
     
     private var statusItem: NSStatusItem!
     private var updateTimer: Timer?
+    private weak var remainingMenuItem: NSMenuItem?
     private let engine = PowerDisplayEngine.shared
     private let settings = SettingsManager.shared
     private let batteryMonitor = BatteryMonitor.shared
@@ -39,22 +40,38 @@ public final class StatusItemManager: NSObject, NSMenuDelegate {
     }
     
     private func startPeriodicTimer() {
-        updateTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
+        updateTimer?.invalidate()
+        let timer = Timer(timeInterval: 0.5, repeats: true) { [weak self] _ in
             self?.updateTimerDisplayIfNeeded()
         }
+        RunLoop.main.add(timer, forMode: .common)
+        updateTimer = timer
     }
     
     private func updateTimerDisplayIfNeeded() {
-        guard engine.isSessionActive, settings.showTimerInMenuBar else {
+        engine.checkExpiration()
+        
+        let isActive = engine.isSessionActive
+        let remaining = engine.formattedRemainingTime()
+        
+        // 1. Обновляем статус в строке меню рядом с иконкой
+        if isActive && settings.showTimerInMenuBar, let remaining = remaining {
+            let label = (remaining == TR("indefinite")) ? " ∞" : " \(remaining)"
+            if statusItem.button?.title != label {
+                statusItem.button?.title = label
+            }
+        } else {
             if statusItem.button?.title != "" {
                 statusItem.button?.title = ""
             }
-            return
         }
         
-        if let remaining = engine.formattedRemainingTime() {
-            let label = (remaining == TR("indefinite")) ? " ∞" : " \(remaining)"
-            statusItem.button?.title = label
+        // 2. Обновляем текст пункта оставшегося времени прямо внутри открытого выпадающего меню
+        if let item = remainingMenuItem, isActive, let remaining = remaining {
+            let detailTitle = (remaining == TR("indefinite"))
+                ? TR("session_duration_inf")
+                : String(format: TR("session_remaining"), remaining)
+            item.title = "   \(detailTitle)"
         }
     }
     
@@ -104,6 +121,7 @@ public final class StatusItemManager: NSObject, NSMenuDelegate {
     }
     
     public func menuDidClose(_ menu: NSMenu) {
+        remainingMenuItem = nil
         DispatchQueue.main.async { [weak self] in
             self?.statusItem.menu = nil
         }
@@ -118,7 +136,7 @@ public final class StatusItemManager: NSObject, NSMenuDelegate {
             statusItem.isEnabled = false
             let font = NSFont.boldSystemFont(ofSize: 13)
             statusItem.attributedTitle = NSAttributedString(
-                string: TR("session_active"),
+                string: "● " + TR("session_active"),
                 attributes: [.font: font, .foregroundColor: NSColor.systemGreen]
             )
             menu.addItem(statusItem)
@@ -130,6 +148,7 @@ public final class StatusItemManager: NSObject, NSMenuDelegate {
                 let detailItem = NSMenuItem(title: "   \(detailTitle)", action: nil, keyEquivalent: "")
                 detailItem.isEnabled = false
                 menu.addItem(detailItem)
+                self.remainingMenuItem = detailItem
             }
             
             let endItem = NSMenuItem(title: TR("end_session"), action: #selector(endSessionClicked), keyEquivalent: "x")
@@ -137,6 +156,47 @@ public final class StatusItemManager: NSObject, NSMenuDelegate {
             menu.addItem(endItem)
             
             menu.addItem(NSMenuItem.separator())
+            
+            // Подменю изменения и продления сессии
+            let changeTimerItem = NSMenuItem(title: TR("change_timer"), action: nil, keyEquivalent: "")
+            let changeMenu = NSMenu()
+            
+            for (mins, label) in [(15, String(format: TR("add_minutes"), 15)),
+                                  (30, String(format: TR("add_minutes"), 30)),
+                                  (45, String(format: TR("add_minutes"), 45)),
+                                  (60, String(format: TR("add_hours"), 1)),
+                                  (120, String(format: TR("add_hours"), 2))] {
+                let item = NSMenuItem(title: label, action: #selector(extendSessionByTag(_:)), keyEquivalent: "")
+                item.target = self
+                item.tag = mins * 60
+                changeMenu.addItem(item)
+            }
+            
+            changeMenu.addItem(NSMenuItem.separator())
+            
+            let customChangeItem = NSMenuItem(title: TR("custom_timer"), action: #selector(openCustomTimerDialog), keyEquivalent: "")
+            customChangeItem.target = self
+            changeMenu.addItem(customChangeItem)
+            
+            let untilTimeChangeItem = NSMenuItem(title: TR("until_time"), action: #selector(openUntilTimeDialog), keyEquivalent: "")
+            untilTimeChangeItem.target = self
+            changeMenu.addItem(untilTimeChangeItem)
+            
+            changeMenu.addItem(NSMenuItem.separator())
+            
+            let switchToIndefItem = NSMenuItem(title: TR("switch_to_indefinite"), action: #selector(switchToIndefinite), keyEquivalent: "")
+            switchToIndefItem.target = self
+            changeMenu.addItem(switchToIndefItem)
+            
+            changeTimerItem.submenu = changeMenu
+            menu.addItem(changeTimerItem)
+            
+            menu.addItem(NSMenuItem.separator())
+            
+            let timerBarItem = NSMenuItem(title: TR("show_timer"), action: #selector(toggleShowTimerMenuBar), keyEquivalent: "")
+            timerBarItem.target = self
+            timerBarItem.state = settings.showTimerInMenuBar ? .on : .off
+            menu.addItem(timerBarItem)
             
             let allowDisplayItem = NSMenuItem(title: TR("allow_display_sleep"), action: #selector(toggleAllowDisplaySleep), keyEquivalent: "")
             allowDisplayItem.target = self
@@ -156,29 +216,59 @@ public final class StatusItemManager: NSObject, NSMenuDelegate {
             indefItem.target = self
             menu.addItem(indefItem)
             
-            // Минуты
+            menu.addItem(NSMenuItem.separator())
+            
+            // Быстрые пресеты прямо в корневом меню (15 мин, 30 мин, 1 час, 2 часа)
+            for (mins, label) in [(15, String(format: TR("min_suffix"), 15)),
+                                  (30, String(format: TR("min_suffix"), 30)),
+                                  (60, String(format: TR("hour_suffix"), 1)),
+                                  (120, String(format: TR("hour_suffix"), 2))] {
+                let item = NSMenuItem(title: label, action: #selector(startTimedSession(_:)), keyEquivalent: "")
+                item.target = self
+                item.tag = mins * 60
+                menu.addItem(item)
+            }
+            
+            // Другие интервалы
+            let otherItem = NSMenuItem(title: TR("other_intervals"), action: nil, keyEquivalent: "")
+            let otherMenu = NSMenu()
+            
             let minutesItem = NSMenuItem(title: TR("minutes"), action: nil, keyEquivalent: "")
             let minutesMenu = NSMenu()
-            for m in [5, 10, 15, 20, 25, 30, 45, 50] {
+            for m in [5, 10, 20, 25, 45, 50] {
                 let item = NSMenuItem(title: String(format: TR("min_suffix"), m), action: #selector(startTimedSession(_:)), keyEquivalent: "")
                 item.target = self
                 item.tag = m * 60
                 minutesMenu.addItem(item)
             }
             minutesItem.submenu = minutesMenu
-            menu.addItem(minutesItem)
+            otherMenu.addItem(minutesItem)
             
-            // Часы
             let hoursItem = NSMenuItem(title: TR("hours"), action: nil, keyEquivalent: "")
             let hoursMenu = NSMenu()
-            for h in [1, 2, 3, 4, 6, 8, 12, 24] {
+            for h in [3, 4, 6, 8, 12, 24] {
                 let item = NSMenuItem(title: String(format: TR("hour_suffix"), h), action: #selector(startTimedSession(_:)), keyEquivalent: "")
                 item.target = self
                 item.tag = h * 3600
                 hoursMenu.addItem(item)
             }
             hoursItem.submenu = hoursMenu
-            menu.addItem(hoursItem)
+            otherMenu.addItem(hoursItem)
+            
+            otherItem.submenu = otherMenu
+            menu.addItem(otherItem)
+            
+            menu.addItem(NSMenuItem.separator())
+            
+            // Свой таймер (Часы + Минуты + Пресеты)
+            let customItem = NSMenuItem(title: TR("custom_timer"), action: #selector(openCustomTimerDialog), keyEquivalent: "")
+            customItem.target = self
+            menu.addItem(customItem)
+            
+            // До определенного времени (Time Picker)
+            let untilItem = NSMenuItem(title: TR("until_time"), action: #selector(openUntilTimeDialog), keyEquivalent: "")
+            untilItem.target = self
+            menu.addItem(untilItem)
         }
         
         menu.addItem(NSMenuItem.separator())
@@ -225,6 +315,16 @@ public final class StatusItemManager: NSObject, NSMenuDelegate {
         quickMenu.addItem(qStopDisconnect)
         
         quickMenu.addItem(NSMenuItem.separator())
+        
+        let qShowTimer = NSMenuItem(title: TR("show_timer"), action: #selector(toggleShowTimerMenuBar), keyEquivalent: "")
+        qShowTimer.target = self
+        qShowTimer.state = settings.showTimerInMenuBar ? .on : .off
+        quickMenu.addItem(qShowTimer)
+        
+        let qQuitApp = NSMenuItem(title: TR("quit_app_on_session_end"), action: #selector(toggleQuitOnEnd), keyEquivalent: "")
+        qQuitApp.target = self
+        qQuitApp.state = settings.quitAppOnSessionEnd ? .on : .off
+        quickMenu.addItem(qQuitApp)
         
         let qLaunchAtLogin = NSMenuItem(title: TR("launch_at_login"), action: #selector(toggleLaunchAtLogin), keyEquivalent: "")
         qLaunchAtLogin.target = self
@@ -306,6 +406,43 @@ public final class StatusItemManager: NSObject, NSMenuDelegate {
     @objc private func startIndefiniteSession() { engine.startSession(durationSeconds: 0) }
     @objc private func startTimedSession(_ sender: NSMenuItem) { engine.startSession(durationSeconds: sender.tag) }
     @objc private func endSessionClicked() { engine.stopSession() }
+    
+    @objc private func extendSessionByTag(_ sender: NSMenuItem) {
+        engine.extendSession(additionalSeconds: sender.tag)
+    }
+    
+    @objc private func switchToIndefinite() {
+        engine.setSessionDuration(durationSeconds: 0)
+    }
+    
+    @objc private func openCustomTimerDialog() {
+        TimerDialogController.shared.showCustomTimerDialog(initialSeconds: 30 * 60) { [weak self] seconds, _ in
+            if self?.engine.isSessionActive == true {
+                self?.engine.setSessionDuration(durationSeconds: seconds)
+            } else {
+                self?.engine.startSession(durationSeconds: seconds)
+            }
+        }
+    }
+    
+    @objc private func openUntilTimeDialog() {
+        TimerDialogController.shared.showUntilTimeDialog { [weak self] seconds, _ in
+            if self?.engine.isSessionActive == true {
+                self?.engine.setSessionDuration(durationSeconds: seconds)
+            } else {
+                self?.engine.startSession(durationSeconds: seconds)
+            }
+        }
+    }
+    
+    @objc private func toggleShowTimerMenuBar() {
+        settings.showTimerInMenuBar.toggle()
+        updateTimerDisplayIfNeeded()
+    }
+    
+    @objc private func toggleQuitOnEnd() {
+        settings.quitAppOnSessionEnd.toggle()
+    }
     
     @objc private func toggleAllowDisplaySleep() {
         settings.allowDisplaySleep.toggle()

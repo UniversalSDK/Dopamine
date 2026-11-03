@@ -229,7 +229,7 @@ public final class PreferencesWindowController: NSWindowController {
     // MARK: - Вкладка: Язык, Обновления и Аналитика
     private func createGeneralView(frame: NSRect) -> NSView {
         let view = NSView(frame: frame)
-        var y: CGFloat = 345
+        var y: CGFloat = 360
         
         // Секция языка
         let langLabel = NSTextField(labelWithString: TR("lang_select"))
@@ -246,46 +246,53 @@ public final class PreferencesWindowController: NSWindowController {
         langPopup.target = self
         langPopup.action = #selector(languageChanged(_:))
         view.addSubview(langPopup)
-        y -= 38
+        y -= 36
         
         // Секция автозапуска при входе в macOS (Launch at Login)
         let chkLaunchAtLogin = NSButton(checkboxWithTitle: TR("launch_at_login"), target: self, action: #selector(toggleLaunchAtLogin(_:)))
         chkLaunchAtLogin.state = LaunchAtLoginHelper.isEnabled ? .on : .off
         chkLaunchAtLogin.frame = NSRect(x: 16, y: y, width: 480, height: 20)
         view.addSubview(chkLaunchAtLogin)
-        y -= 38
+        y -= 28
+        
+        // Завершение приложения при окончании сессии
+        let chkQuitApp = NSButton(checkboxWithTitle: TR("quit_app_on_session_end"), target: self, action: #selector(toggleQuitAppOnSessionEnd(_:)))
+        chkQuitApp.state = settings.quitAppOnSessionEnd ? .on : .off
+        chkQuitApp.frame = NSRect(x: 16, y: y, width: 480, height: 20)
+        view.addSubview(chkQuitApp)
+        y -= 34
         
         // Секция обновлений
         let updateHeader = NSTextField(labelWithString: TR("updates_header"))
         updateHeader.font = NSFont.boldSystemFont(ofSize: 13)
         updateHeader.frame = NSRect(x: 16, y: y, width: 480, height: 20)
         view.addSubview(updateHeader)
-        y -= 28
+        y -= 26
         
         let chkAutoUpdates = NSButton(checkboxWithTitle: TR("auto_check_updates"), target: self, action: #selector(toggleAutoUpdates(_:)))
         chkAutoUpdates.state = updateManager.isAutoCheckEnabled ? .on : .off
         chkAutoUpdates.frame = NSRect(x: 16, y: y, width: 480, height: 20)
         view.addSubview(chkAutoUpdates)
-        y -= 32
+        y -= 30
         
         let btnCheckUpdates = NSButton(title: TR("btn_check_now"), target: self, action: #selector(checkUpdatesClicked))
-        btnCheckUpdates.frame = NSRect(x: 16, y: y, width: 220, height: 28)
+        btnCheckUpdates.frame = NSRect(x: 16, y: y, width: 220, height: 26)
         btnCheckUpdates.bezelStyle = .rounded
         view.addSubview(btnCheckUpdates)
-        y -= 48
+        y -= 40
         
         // Секция аналитики и приватности
         let analHeader = NSTextField(labelWithString: TR("analytics_header"))
         analHeader.font = NSFont.boldSystemFont(ofSize: 13)
         analHeader.frame = NSRect(x: 16, y: y, width: 480, height: 20)
         view.addSubview(analHeader)
-        y -= 28
+        y -= 26
         
         let chkAnalytics = NSButton(checkboxWithTitle: TR("allow_analytics"), target: self, action: #selector(toggleAnalytics(_:)))
         chkAnalytics.state = analytics.isEnabled ? .on : .off
         chkAnalytics.frame = NSRect(x: 16, y: y, width: 480, height: 20)
         view.addSubview(chkAnalytics)
-        y -= 26
+        y -= 24
         
         let descAnal = NSTextField(wrappingLabelWithString: TR("analytics_desc"))
         descAnal.font = NSFont.systemFont(ofSize: 11)
@@ -353,6 +360,7 @@ public final class PreferencesWindowController: NSWindowController {
     @objc private func toggleStartOnAC(_ sender: NSButton) { settings.startSessionOnACConnect = (sender.state == .on) }
     @objc private func toggleAutoUpdates(_ sender: NSButton) { updateManager.isAutoCheckEnabled = (sender.state == .on) }
     @objc private func toggleAnalytics(_ sender: NSButton) { analytics.isEnabled = (sender.state == .on) }
+    @objc private func toggleQuitAppOnSessionEnd(_ sender: NSButton) { settings.quitAppOnSessionEnd = (sender.state == .on) }
     @objc private func toggleLaunchAtLogin(_ sender: NSButton) { LaunchAtLoginHelper.isEnabled = (sender.state == .on) }
     
     @objc private func thresholdChanged(_ sender: NSPopUpButton) {

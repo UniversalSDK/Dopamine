@@ -128,12 +128,65 @@ public final class PowerDisplayEngine {
         }
     }
     
+    /// Продлить текущую сессию на указанное количество секунд (или запустить, если не активна).
+    public func extendSession(additionalSeconds: Int) {
+        guard isSessionActive else {
+            startSession(durationSeconds: additionalSeconds)
+            return
+        }
+        let currentRemaining = sessionEndDate.map { max(0, Int($0.timeIntervalSinceNow)) } ?? 0
+        let newTotal = currentRemaining + additionalSeconds
+        setSessionDuration(durationSeconds: newTotal)
+    }
+    
+    /// Установить новую длительность для текущей сессии (0 = бессрочно).
+    public func setSessionDuration(durationSeconds: Int) {
+        guard isSessionActive else {
+            startSession(durationSeconds: durationSeconds)
+            return
+        }
+        if durationSeconds > 0 {
+            sessionEndDate = Date().addingTimeInterval(TimeInterval(durationSeconds))
+            setupDurationTimer(durationSeconds: durationSeconds)
+        } else {
+            sessionEndDate = nil
+            sessionTimer?.cancel()
+            sessionTimer = nil
+        }
+        NotificationCenter.default.post(name: .sessionStateChanged, object: nil)
+    }
+    
+    /// Проверка истечения сессии по абсолютному системному времени (гарантия срабатывания при открытых меню/диалогах).
+    public func checkExpiration() {
+        guard isSessionActive, let endDate = sessionEndDate else { return }
+        if Date() >= endDate {
+            sessionTimer?.cancel()
+            sessionTimer = nil
+            NSSound(named: "Glass")?.play()
+            let msg = TR("timer_expired_msg")
+            stopSession(reason: msg)
+            if settings.quitAppOnSessionEnd {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                    NSApp.terminate(nil)
+                }
+            }
+        }
+    }
+    
     private func setupDurationTimer(durationSeconds: Int) {
         sessionTimer?.cancel()
         let timer = DispatchSource.makeTimerSource(queue: .main)
         timer.schedule(deadline: .now() + .seconds(durationSeconds))
         timer.setEventHandler { [weak self] in
-            self?.stopSession(reason: "Timer expired")
+            guard let self = self else { return }
+            NSSound(named: "Glass")?.play()
+            let msg = TR("timer_expired_msg")
+            self.stopSession(reason: msg)
+            if self.settings.quitAppOnSessionEnd {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                    NSApp.terminate(nil)
+                }
+            }
         }
         timer.resume()
         sessionTimer = timer

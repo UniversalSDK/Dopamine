@@ -74,7 +74,7 @@ public final class AnalyticsManager {
         eventParams["app_name"] = "Dopamine"
         eventParams["chip"] = chipModel
         eventParams["os_version"] = macOSVersion
-        eventParams["app_version"] = "1.2.2"
+        eventParams["app_version"] = UpdateManager.shared.currentVersion
         eventParams["locale"] = LocalizationManager.shared.activeCode
         if eventParams["engagement_time_msec"] == nil {
             eventParams["engagement_time_msec"] = 1000

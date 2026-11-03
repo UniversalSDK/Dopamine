@@ -3,8 +3,8 @@ set -e
 
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 APP_NAME="Dopamine"
-VERSION="1.2.3"
-BUILD_NUM="15"
+VERSION="1.3.0"
+BUILD_NUM="16"
 DIST_DIR="$DIR/dist"
 BUNDLE_PATH="$DIR/build/$APP_NAME.app"
 
@@ -121,7 +121,7 @@ cat <<EOF > "$DIST_DIR/latest.json"
   "githubZipUrl": "https://github.com/UniversalSDK/Dopamine/releases/download/v$VERSION/Dopamine.zip",
   "sha256": "$DMG_SHA256",
   "zipSha256": "$ZIP_SHA256",
-  "releaseNotes": "Dopamine v$VERSION: Adds Launch at Login setting; removes Keychain password prompts for smooth seamless experience.",
+  "releaseNotes": "Dopamine v$VERSION: Full Amphetamine-style session timer system (quick presets 15m/30m/1h/2h, custom hours/minutes dialog, until-specific-time picker, real-time countdown, and auto-quit option).",
   "minOS": "12.0"
 }
 EOF

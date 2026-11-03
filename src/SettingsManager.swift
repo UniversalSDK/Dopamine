@@ -34,6 +34,7 @@ public final class SettingsManager {
         static let turnOffBacklightOnLidClose = "turnOffBacklightOnLidClose"
         static let lockScreenOnLidClose = "lockScreenOnLidClose"
         static let showTimerInMenuBar = "showTimerInMenuBar"
+        static let quitAppOnSessionEnd = "quitAppOnSessionEnd"
         
         // Аккумулятор и Питание
         static let endSessionOnLowBattery = "endSessionOnLowBattery"
@@ -58,6 +59,7 @@ public final class SettingsManager {
             Keys.turnOffBacklightOnLidClose: true,
             Keys.lockScreenOnLidClose: true,
             Keys.showTimerInMenuBar: false,
+            Keys.quitAppOnSessionEnd: false,
             
             // Настройки аккумулятора
             Keys.endSessionOnLowBattery: true,
@@ -133,6 +135,15 @@ public final class SettingsManager {
             defaults.set(newValue, forKey: Keys.showTimerInMenuBar)
             NotificationCenter.default.post(name: .settingsChanged, object: nil)
             AnalyticsManager.shared.trackSettingChange(key: "show_timer", value: newValue)
+        }
+    }
+    
+    public var quitAppOnSessionEnd: Bool {
+        get { defaults.bool(forKey: Keys.quitAppOnSessionEnd) }
+        set {
+            defaults.set(newValue, forKey: Keys.quitAppOnSessionEnd)
+            NotificationCenter.default.post(name: .settingsChanged, object: nil)
+            AnalyticsManager.shared.trackSettingChange(key: "quit_on_end", value: newValue)
         }
     }
     
