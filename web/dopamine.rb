@@ -1,6 +1,6 @@
 cask "dopamine" do
-  version "1.3.0"
-  sha256 "b118b9abcf35ea1c873df7e06f185a508617452ae95ce82c321afee9ef73ea5b"
+  version "1.3.1"
+  sha256 "9e9ecd4df4209c3eb5f3d6a417fefd7b62733eac4876b3f49a9975e9707f8f39"
 
   url "https://dopamine.33rd.pro/Dopamine.dmg"
   name "Dopamine"
